@@ -1,0 +1,167 @@
+.priority-section {
+  padding: 52px clamp(20px, 5vw, 72px);
+  background: #ffffff;
+}
+
+.priority-heading {
+  max-width: 760px;
+  margin: 0 auto 30px;
+  text-align: center;
+}
+
+.priority-heading span {
+  display: block;
+  margin-bottom: 8px;
+  color: #08752d;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 3px;
+}
+
+.priority-heading h2 {
+  margin: 0 0 12px;
+  color: #07265c;
+  font-size: clamp(32px, 4.5vw, 50px);
+  line-height: 1.05;
+}
+
+.priority-heading p {
+  margin: 0;
+  color: #687893;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.priority-layout {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 24px;
+}
+
+.priority-info,
+.priority-form {
+  padding: 26px;
+  border: 1px solid #dbe7f5;
+  border-radius: 24px;
+  background: #f8fbff;
+  box-shadow: 0 16px 38px rgba(7, 38, 92, 0.07);
+}
+
+.priority-info strong {
+  display: block;
+  margin-bottom: 18px;
+  color: #07265c;
+  font-size: 21px;
+}
+
+.priority-info ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.priority-info li {
+  position: relative;
+  margin: 12px 0;
+  padding-left: 27px;
+  color: #31415d;
+  line-height: 1.5;
+}
+
+.priority-info li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #08752d;
+  font-weight: 900;
+}
+
+.priority-rule {
+  margin-top: 20px;
+  padding: 14px;
+  border-radius: 14px;
+  color: #765900;
+  background: #fff4c7;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.priority-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.priority-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: #07265c;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.priority-form input,
+.priority-form select {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 13px;
+  border: 1px solid #cad8eb;
+  border-radius: 12px;
+  color: #263851;
+  background: #ffffff;
+  font: inherit;
+  outline: none;
+}
+
+.priority-form input:focus,
+.priority-form select:focus {
+  border-color: #08752d;
+  box-shadow: 0 0 0 3px rgba(8, 117, 45, 0.1);
+}
+
+.priority-button {
+  width: 100%;
+  min-height: 54px;
+  margin-top: 18px;
+  border: none;
+  border-radius: 999px;
+  color: #ffffff;
+  background: #07265c;
+  box-shadow: 0 12px 24px rgba(7, 38, 92, 0.22);
+  font-size: 16px;
+  font-weight: 900;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.priority-button:hover {
+  transform: translateY(-3px);
+  background: #0a397b;
+}
+
+@media (max-width: 850px) {
+  .priority-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .priority-section {
+    padding: 44px 18px;
+  }
+
+  .priority-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .priority-info,
+  .priority-form {
+    padding: 20px 16px;
+  }
+}

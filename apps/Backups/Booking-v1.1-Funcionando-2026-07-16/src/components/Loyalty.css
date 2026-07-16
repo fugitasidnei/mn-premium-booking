@@ -1,0 +1,124 @@
+.loyalty-section {
+  padding: 58px clamp(20px, 5vw, 72px);
+  background: #07265c;
+}
+
+.loyalty-heading {
+  max-width: 720px;
+  margin: 0 auto 30px;
+  text-align: center;
+}
+
+.loyalty-heading span {
+  display: block;
+  margin-bottom: 8px;
+  color: #f5b800;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 3px;
+}
+
+.loyalty-heading h2 {
+  margin: 0 0 10px;
+  color: #ffffff;
+  font-size: clamp(32px, 4.5vw, 48px);
+  line-height: 1.05;
+}
+
+.loyalty-heading p {
+  margin: 0;
+  color: #c8d6eb;
+  font-size: 16px;
+}
+
+.loyalty-grid {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.reward-card {
+  position: relative;
+  min-width: 0;
+  padding: 24px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 22px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.reward-card-featured {
+  border-color: #f5b800;
+  background: rgba(245, 184, 0, 0.12);
+}
+
+.reward-badge {
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 7px 13px;
+  border-radius: 999px;
+  color: #07265c;
+  background: #f5b800;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.reward-card h3 {
+  margin: 0 0 14px;
+  color: #ffffff;
+  font-size: 18px;
+}
+
+.reward-card strong {
+  display: block;
+  color: #f5b800;
+  font-size: 25px;
+}
+
+.reward-card p {
+  margin: 7px 0 0;
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.loyalty-rules {
+  max-width: 900px;
+  margin: 26px auto 0;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.loyalty-rules p {
+  margin: 7px 0;
+  color: #c8d6eb;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.loyalty-rules p::before {
+  content: "• ";
+  color: #f5b800;
+}
+
+@media (max-width: 900px) {
+  .loyalty-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .loyalty-section {
+    padding: 48px 18px;
+  }
+
+  .loyalty-grid {
+    grid-template-columns: 1fr;
+  }
+}

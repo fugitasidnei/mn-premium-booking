@@ -1,0 +1,336 @@
+body {
+  margin: 0;
+  background: linear-gradient(180deg, #eef5ff 0%, #ffffff 100%);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button {
+  padding: 14px 28px;
+  background: #0b4ea2;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+  background: #083d81;
+}
+
+.rating {
+  margin-top: 20px;
+  color: #f4b400;
+  font-size: 22px;
+  font-weight: bold;
+}
+main {
+  width: calc(100% - 40px);
+  max-width: 760px;
+  margin: 40px auto;
+  padding: 40px 20px;
+  background-color: white;
+  border-radius: 24px;
+  box-shadow: 0 18px 50px rgba(11, 78, 162, 0.18);
+  box-sizing: border-box;
+}
+.services{
+    display:flex;
+    justify-content:center;
+    gap:30px;
+    flex-wrap:wrap;
+    margin-top:40px;
+}
+
+.service-card{
+    width:320px;
+    background:white;
+    border-radius:22px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,.10);
+    transition:.3s;
+}
+
+.service-card:hover{
+    transform:translateY(-8px);
+}
+
+.service-image{
+    width:100%;
+    height:260px;
+    object-fit:cover;
+    display:block;
+}
+
+.service-card h3{
+    text-align:center;
+    color:#0b4ea2;
+    margin:20px 0 10px;
+    font-size:34px;
+}
+
+.service-card p{
+    text-align:center;
+    color:#666;
+    padding:0 18px 22px;
+    font-size:18px;
+}/* Correção definitiva das imagens dos serviços */
+
+main {
+  width: calc(100% - 40px);
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 40px 20px;
+  background-color: white;
+  border-radius: 24px;
+  box-shadow: 0 18px 50px rgba(11, 78, 162, 0.18);
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.services {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  width: 100%;
+  margin-top: 40px;
+}
+
+.service-card {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 22px;
+  background: white;
+  box-sizing: border-box;
+}
+
+.service-card .service-image {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 260px !important;
+  object-fit: cover !important;
+  object-position: center !important;
+}
+
+.service-card h3 {
+  margin: 20px 10px 10px;
+  font-size: 30px;
+}
+
+.service-card p {
+  margin: 0;
+  padding: 0 18px 24px;
+}
+
+@media (max-width: 700px) {
+  .services {
+    grid-template-columns: 1fr;
+  }
+
+  .service-card {
+    max-width: 420px;
+    margin: 0 auto;
+    }
+   } 
+    .why-choose {
+  margin-top: 70px;
+  padding: 60px 35px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #061f46 0%, #0b4ea2 100%);
+  color: white;
+  text-align: center;
+}
+
+.section-label {
+  margin: 0 0 12px;
+  color: #f4b400;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 3px;
+}
+
+.why-choose h2 {
+  margin: 0;
+  font-size: 36px;
+}
+
+.section-intro {
+  max-width: 680px;
+  margin: 18px auto 38px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.benefits {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.benefit-card {
+  position: relative;
+  padding: 28px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.1);
+  text-align: left;
+  backdrop-filter: blur(8px);
+  transition: transform 0.3s, background 0.3s;
+}
+
+.benefit-card:hover {
+  transform: translateY(-7px);
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.benefit-number {
+  display: block;
+  margin-bottom: 20px;
+  color: #f4b400;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.benefit-card h3 {
+  margin: 0 0 12px;
+  color: white;
+  font-size: 21px;
+}
+
+.benefit-card p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+  .benefits {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .why-choose {
+    padding: 45px 20px;
+  }
+
+  .why-choose h2 {
+    font-size: 29px;
+  }
+
+  .benefits {
+    grid-template-columns: 1fr;
+  } 
+}
+.booking-section {
+  margin-top: 70px;
+  padding: 60px 40px;
+  border-radius: 24px;
+  background: #f7faff;
+  border: 1px solid #dce8f7;
+  text-align: center;
+}
+
+.booking-section h2 {
+  margin: 0;
+  color: #082f67;
+  font-size: 38px;
+}
+
+.booking-intro {
+  max-width: 680px;
+  margin: 18px auto 36px;
+  color: #5c6778;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.booking-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group-full {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  color: #082f67;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 14px 15px;
+  border: 1px solid #cdd9e8;
+  border-radius: 12px;
+  background: white;
+  color: #1f2937;
+  font: inherit;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: 3px solid rgba(11, 78, 162, 0.14);
+  border-color: #0b4ea2;
+}
+
+.booking-notice {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px;
+  border-radius: 14px;
+  background: #fff8df;
+  color: #5d4a00;
+  text-align: center;
+}
+
+.booking-submit {
+  justify-self: center;
+  min-width: 260px;
+}
+
+@media (max-width: 700px) {
+  .booking-section {
+    padding: 45px 20px;
+  }
+
+  .booking-section h2 {
+    font-size: 30px;
+  }
+
+  .booking-form {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group-full {
+    grid-column: auto;
+  }
+
+  .booking-submit {
+    width: 100%;
+    min-width: 0;
+  }
+}
