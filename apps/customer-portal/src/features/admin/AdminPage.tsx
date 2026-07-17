@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react"
-
+import "./components/layout/ui/adminUi.css"
 import AdminLogin from "./AdminLogin"
+import AdminLayout from "./components/layout/AdminLayout"
+import BookingPage from "./pages/BookingPage"
+import CustomersPage from "./pages/CustomersPage"
+import DashboardHome from "./pages/DashboardHome"
+import SchedulePage from "./pages/SchedulePage"
+import SettingsPage from "./pages/SettingsPage"
+import WaitingListPage from "./pages/WaitingListPage"
+import type { AdminView } from "./types/AdminView"
+
 import {
   getAdminSession,
   signOutAdmin,
@@ -12,6 +21,9 @@ function AdminPage() {
 
   const [isLoggedIn, setIsLoggedIn] =
     useState(false)
+
+  const [activeView, setActiveView] =
+    useState<AdminView>("dashboard")
 
   useEffect(() => {
     async function checkSession() {
@@ -29,7 +41,31 @@ function AdminPage() {
 
   async function handleLogout() {
     await signOutAdmin()
+
     setIsLoggedIn(false)
+    setActiveView("dashboard")
+  }
+
+  function renderActivePage() {
+    switch (activeView) {
+      case "bookings":
+        return <BookingPage />
+
+      case "customers":
+        return <CustomersPage />
+
+      case "schedule":
+        return <SchedulePage />
+
+      case "waiting-list":
+        return <WaitingListPage />
+
+      case "settings":
+        return <SettingsPage />
+
+      default:
+        return <DashboardHome />
+    }
   }
 
   if (isCheckingSession) {
@@ -49,24 +85,13 @@ function AdminPage() {
   }
 
   return (
-    <main>
-      <section>
-        <span>MN PREMIUM SERVICE</span>
-
-        <h1>Admin Dashboard</h1>
-
-        <p>
-          Administrator login completed successfully.
-        </p>
-
-        <button
-          type="button"
-          onClick={handleLogout}
-        >
-          SIGN OUT
-        </button>
-      </section>
-    </main>
+    <AdminLayout
+      activeView={activeView}
+      onChangeView={setActiveView}
+      onLogout={handleLogout}
+    >
+      {renderActivePage()}
+    </AdminLayout>
   )
 }
 

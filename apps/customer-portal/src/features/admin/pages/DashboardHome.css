@@ -1,0 +1,235 @@
+.dashboard-home {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.dashboard-home__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.dashboard-home__header h1 {
+  margin: 0;
+  color: #152238;
+  font-size: clamp(26px, 3vw, 34px);
+  line-height: 1.1;
+}
+
+.dashboard-home__header p {
+  margin: 7px 0 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.dashboard-home__error {
+  padding: 14px 16px;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.dashboard-home__panels {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns:
+    minmax(0, 1.4fr)
+    minmax(280px, 0.8fr);
+  gap: 20px;
+}
+
+.dashboard-panel {
+  min-width: 0;
+  padding: 22px;
+}
+
+.dashboard-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.dashboard-panel__header h2 {
+  margin: 0;
+  color: #152238;
+  font-size: 19px;
+}
+
+.dashboard-panel__header p {
+  margin: 5px 0 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.dashboard-panel__count {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #edf4ff;
+  color: #0b4ea2;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.dashboard-panel__empty {
+  padding: 42px 16px;
+  color: #64748b;
+  text-align: center;
+}
+
+.dashboard-booking-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-booking {
+  display: grid;
+  align-items: center;
+  grid-template-columns:
+    minmax(120px, 0.8fr)
+    minmax(180px, 1.4fr)
+    minmax(110px, 0.7fr);
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid #edf1f7;
+}
+
+.dashboard-booking:first-child {
+  padding-top: 0;
+}
+
+.dashboard-booking:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.dashboard-booking__schedule,
+.dashboard-booking__customer,
+.dashboard-booking__status {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.dashboard-booking__schedule strong,
+.dashboard-booking__customer strong,
+.dashboard-booking__status strong {
+  overflow: hidden;
+  color: #152238;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-booking__schedule span,
+.dashboard-booking__customer span {
+  overflow: hidden;
+  color: #64748b;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-booking__status {
+  align-items: flex-end;
+}
+
+.dashboard-service-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.dashboard-service {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.dashboard-service__info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.dashboard-service__info strong {
+  color: #152238;
+  font-size: 14px;
+}
+
+.dashboard-service__info span {
+  flex-shrink: 0;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.dashboard-service__track {
+  height: 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e8eef6;
+}
+
+.dashboard-service__progress {
+  height: 100%;
+  min-width: 9px;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    #0b4ea2,
+    #2f7ce5
+  );
+  transition: width 0.3s ease;
+}
+
+@media (max-width: 1100px) {
+  .dashboard-home__panels {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .dashboard-home__header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .dashboard-booking {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .dashboard-booking__status {
+    grid-column: span 2;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 520px) {
+  .dashboard-panel {
+    padding: 17px;
+  }
+
+  .dashboard-booking {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-booking__status {
+    grid-column: auto;
+    align-items: flex-start;
+  }
+}
