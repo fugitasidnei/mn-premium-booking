@@ -7,7 +7,7 @@ import Booking from "./components/Booking"
 import PriorityAccess from "./components/PriorityAccess"
 import Loyalty from "./components/Loyalty"
 import Reviews from "./components/Reviews"
-
+import Footer from "./components/Footer"
 import ConfirmBookingPage from "./pages/booking-confirm/ConfirmBookingPage"
 import CancelBookingPage from "./pages/booking-confirm/CancelBookingPage"
 
@@ -48,16 +48,17 @@ function App() {
   }
 
   return (
-    <main>
-      <Hero />
-      <Services />
-      <WhyChoose />
-      <Booking />
-      <PriorityAccess />
-      <Loyalty />
-      <Reviews />
-    </main>
-  )
+  <main>
+    <Hero />
+    <Services />
+    <WhyChoose />
+    <Booking />
+    <PriorityAccess />
+    <Loyalty />
+    <Reviews />
+    <Footer />
+  </main>
+)
 }
 
 export default App

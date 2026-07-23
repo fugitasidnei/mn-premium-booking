@@ -1,167 +1,436 @@
+/* =========================================
+   MN PREMIUM SERVICE — PRIORITY ACCESS
+========================================= */
+
 .priority-section {
-  padding: 52px clamp(20px, 5vw, 72px);
-  background: #ffffff;
+  width: 100%;
+  padding: 88px 20px;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(8, 117, 45, 0.08),
+      transparent 30%
+    ),
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #f4f8fd 100%
+    );
 }
 
+.priority-container {
+  width: min(100%, 1120px);
+  margin: 0 auto;
+}
+
+/* =========================================
+   HEADING
+========================================= */
+
 .priority-heading {
-  max-width: 760px;
-  margin: 0 auto 30px;
+  max-width: 780px;
+  margin: 0 auto 44px;
   text-align: center;
 }
 
-.priority-heading span {
-  display: block;
-  margin-bottom: 8px;
+.priority-heading > span {
+  display: inline-block;
+  margin-bottom: 12px;
   color: #08752d;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 900;
+  line-height: 1.4;
   letter-spacing: 3px;
 }
 
 .priority-heading h2 {
-  margin: 0 0 12px;
+  margin: 0;
   color: #07265c;
-  font-size: clamp(32px, 4.5vw, 50px);
-  line-height: 1.05;
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 900;
+  line-height: 1.06;
+  letter-spacing: -1.7px;
 }
 
 .priority-heading p {
-  margin: 0;
+  max-width: 680px;
+  margin: 18px auto 0;
   color: #687893;
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: 17px;
+  line-height: 1.7;
 }
 
+/* =========================================
+   LAYOUT
+========================================= */
+
 .priority-layout {
-  max-width: 1080px;
-  margin: 0 auto;
   display: grid;
-  grid-template-columns: 0.8fr 1.2fr;
-  gap: 24px;
+  grid-template-columns:
+    minmax(0, 0.82fr)
+    minmax(0, 1.18fr);
+  gap: 22px;
 }
 
 .priority-info,
 .priority-form {
-  padding: 26px;
+  min-width: 0;
+  padding: 32px;
   border: 1px solid #dbe7f5;
-  border-radius: 24px;
-  background: #f8fbff;
-  box-shadow: 0 16px 38px rgba(7, 38, 92, 0.07);
+  border-radius: 26px;
+  box-shadow:
+    0 18px 42px rgba(7, 38, 92, 0.08);
 }
 
-.priority-info strong {
-  display: block;
-  margin-bottom: 18px;
+/* =========================================
+   INFORMATION CARD
+========================================= */
+
+.priority-info {
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(
+      circle at bottom right,
+      rgba(245, 184, 0, 0.1),
+      transparent 34%
+    ),
+    linear-gradient(
+      145deg,
+      #061d49 0%,
+      #07265c 100%
+    );
+}
+
+.priority-info-icon {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 22px;
+  border-radius: 18px;
   color: #07265c;
-  font-size: 21px;
+  background: #f5b800;
+  font-size: 23px;
+  font-weight: 900;
+  box-shadow:
+    0 12px 26px rgba(245, 184, 0, 0.22);
+}
+
+.priority-info-label {
+  display: block;
+  margin-bottom: 9px;
+  color: #f5b800;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.priority-info h3 {
+  margin: 0 0 24px;
+  color: #ffffff;
+  font-size: 27px;
+  font-weight: 900;
+  line-height: 1.18;
+  letter-spacing: -0.7px;
 }
 
 .priority-info ul {
+  display: grid;
+  gap: 13px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .priority-info li {
-  position: relative;
-  margin: 12px 0;
-  padding-left: 27px;
-  color: #31415d;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: #d3deed;
+  font-size: 15px;
   line-height: 1.5;
 }
 
-.priority-info li::before {
-  content: "✓";
-  position: absolute;
-  left: 0;
-  color: #08752d;
+.priority-check {
+  width: 28px;
+  min-width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #07265c;
+  background: #f5b800;
+  font-size: 13px;
   font-weight: 900;
 }
 
 .priority-rule {
-  margin-top: 20px;
-  padding: 14px;
-  border-radius: 14px;
-  color: #765900;
-  background: #fff4c7;
+  margin-top: auto;
+  padding: 18px;
+  border: 1px solid rgba(245, 184, 0, 0.28);
+  border-radius: 17px;
+  background: rgba(245, 184, 0, 0.1);
+}
+
+.priority-rule strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #f5b800;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.priority-rule p {
+  margin: 0;
+  color: #d8e2ef;
   font-size: 13px;
-  font-weight: 700;
-  line-height: 1.5;
+  line-height: 1.55;
+}
+
+/* =========================================
+   FORM
+========================================= */
+
+.priority-form {
+  background: #ffffff;
+}
+
+.priority-form-heading {
+  margin-bottom: 25px;
+}
+
+.priority-form-heading > span {
+  display: block;
+  margin-bottom: 7px;
+  color: #08752d;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.priority-form-heading h3 {
+  margin: 0;
+  color: #07265c;
+  font-size: 27px;
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: -0.7px;
+}
+
+.priority-form-heading p {
+  margin: 10px 0 0;
+  color: #687893;
+  font-size: 14px;
+  line-height: 1.55;
 }
 
 .priority-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 15px;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 16px;
 }
 
 .priority-form label {
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 8px;
+}
+
+.priority-form label > span {
   color: #07265c;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 900;
 }
 
 .priority-form input,
 .priority-form select {
   width: 100%;
-  min-height: 46px;
-  padding: 0 13px;
+  min-width: 0;
+  min-height: 54px;
+  box-sizing: border-box;
+  padding: 0 15px;
   border: 1px solid #cad8eb;
-  border-radius: 12px;
+  border-radius: 13px;
   color: #263851;
   background: #ffffff;
   font: inherit;
+  font-size: 15px;
   outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.priority-form input:hover,
+.priority-form select:hover {
+  border-color: #9eb4cc;
 }
 
 .priority-form input:focus,
 .priority-form select:focus {
   border-color: #08752d;
-  box-shadow: 0 0 0 3px rgba(8, 117, 45, 0.1);
+  background: #fcfffd;
+  box-shadow:
+    0 0 0 4px rgba(8, 117, 45, 0.1);
 }
+
+.priority-form input::placeholder {
+  color: #8b97a8;
+}
+
+/* =========================================
+   BUTTON
+========================================= */
 
 .priority-button {
   width: 100%;
-  min-height: 54px;
-  margin-top: 18px;
-  border: none;
+  min-height: 62px;
+  margin-top: 22px;
+  padding: 15px 22px;
+  border: 0;
   border-radius: 999px;
   color: #ffffff;
-  background: #07265c;
-  box-shadow: 0 12px 24px rgba(7, 38, 92, 0.22);
+  background: #08752d;
+  box-shadow:
+    0 14px 30px rgba(8, 117, 45, 0.25);
   font-size: 16px;
   font-weight: 900;
+  letter-spacing: 0.5px;
   cursor: pointer;
   transition:
     transform 0.2s ease,
-    background 0.2s ease;
+    background 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .priority-button:hover {
-  transform: translateY(-3px);
-  background: #0a397b;
+  transform: translateY(-2px);
+  background: #065d24;
+  box-shadow:
+    0 18px 36px rgba(8, 117, 45, 0.32);
 }
 
-@media (max-width: 850px) {
+.priority-form-note {
+  margin: 16px auto 0;
+  color: #788598;
+  font-size: 12px;
+  line-height: 1.55;
+  text-align: center;
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 880px) {
+  .priority-section {
+    padding: 74px 18px;
+  }
+
   .priority-layout {
     grid-template-columns: 1fr;
   }
+
+  .priority-rule {
+    margin-top: 28px;
+  }
 }
+
+/* =========================================
+   MOBILE
+========================================= */
 
 @media (max-width: 560px) {
   .priority-section {
-    padding: 44px 18px;
+    padding: 64px 14px 72px;
   }
 
-  .priority-grid {
-    grid-template-columns: 1fr;
+  .priority-heading {
+    margin-bottom: 32px;
+  }
+
+  .priority-heading > span {
+    margin-bottom: 10px;
+    font-size: 12px;
+    letter-spacing: 2.3px;
+  }
+
+  .priority-heading h2 {
+    font-size: 37px;
+    line-height: 1.05;
+    letter-spacing: -1.2px;
+  }
+
+  .priority-heading p {
+    max-width: 350px;
+    margin-top: 15px;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  .priority-layout {
+    gap: 15px;
   }
 
   .priority-info,
   .priority-form {
-    padding: 20px 16px;
+    padding: 24px 19px;
+    border-radius: 22px;
+  }
+
+  .priority-info-icon {
+    width: 51px;
+    height: 51px;
+    margin-bottom: 18px;
+    border-radius: 16px;
+    font-size: 21px;
+  }
+
+  .priority-info h3,
+  .priority-form-heading h3 {
+    font-size: 23px;
+  }
+
+  .priority-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .priority-form input,
+  .priority-form select {
+    min-height: 56px;
+    font-size: 16px;
+  }
+
+  .priority-button {
+    min-height: 62px;
+    font-size: 15px;
+  }
+}
+
+/* =========================================
+   SMALL PHONES
+========================================= */
+
+@media (max-width: 390px) {
+  .priority-section {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .priority-heading h2 {
+    font-size: 34px;
+  }
+
+  .priority-info,
+  .priority-form {
+    padding-right: 17px;
+    padding-left: 17px;
   }
 }

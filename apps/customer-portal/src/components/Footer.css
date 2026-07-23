@@ -1,0 +1,301 @@
+/* =========================================
+   MN PREMIUM SERVICE — FOOTER
+========================================= */
+
+.site-footer {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 76px 20px 26px;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(245, 184, 0, 0.1),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(8, 117, 45, 0.14),
+      transparent 32%
+    ),
+    linear-gradient(
+      145deg,
+      #03132f 0%,
+      #061d49 55%,
+      #07265c 100%
+    );
+}
+
+.site-footer::before {
+  content: "";
+  position: absolute;
+  top: -190px;
+  right: -190px;
+  width: 430px;
+  height: 430px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+}
+
+.footer-container {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 1160px);
+  margin: 0 auto;
+}
+
+.footer-main {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.5fr)
+    repeat(3, minmax(0, 0.75fr));
+  gap: 38px;
+}
+
+.footer-brand {
+  max-width: 390px;
+}
+
+.footer-eyebrow {
+  display: block;
+  margin-bottom: 13px;
+  color: #f5b800;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 2.7px;
+}
+
+.footer-brand h2 {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(32px, 4vw, 46px);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -1.4px;
+}
+
+.footer-brand p {
+  max-width: 360px;
+  margin: 18px 0 0;
+  color: #c9d5e7;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.footer-booking-button {
+  min-height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 25px;
+  padding: 0 22px;
+  border-radius: 999px;
+  color: #07265c;
+  background: #f5b800;
+  box-shadow:
+    0 13px 27px rgba(245, 184, 0, 0.2);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  text-decoration: none;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.footer-booking-button:hover {
+  transform: translateY(-2px);
+  background: #ffd23f;
+  box-shadow:
+    0 17px 32px rgba(245, 184, 0, 0.27);
+}
+
+.footer-column h3 {
+  margin: 0 0 18px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.footer-links {
+  display: grid;
+  gap: 12px;
+}
+
+.footer-links a {
+  width: fit-content;
+  color: #c9d5e7;
+  font-size: 14px;
+  line-height: 1.4;
+  text-decoration: none;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: #f5b800;
+  transform: translateX(3px);
+}
+
+.footer-info-list {
+  display: grid;
+  gap: 15px;
+}
+
+.footer-info-list p {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+
+.footer-info-list strong {
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.footer-info-list span {
+  color: #c9d5e7;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.footer-contact {
+  display: grid;
+  gap: 13px;
+  margin: 0;
+  font-style: normal;
+}
+
+.footer-contact a,
+.footer-contact span {
+  color: #c9d5e7;
+  font-size: 14px;
+  line-height: 1.5;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.footer-contact a:hover {
+  color: #f5b800;
+}
+
+.footer-divider {
+  height: 1px;
+  margin: 46px 0 24px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.footer-bottom p {
+  margin: 0;
+  color: #9fadc1;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 960px) {
+  .footer-main {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .footer-brand {
+    max-width: 100%;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 620px) {
+  .site-footer {
+    padding: 64px 16px 24px;
+  }
+
+  .footer-main {
+    grid-template-columns: 1fr;
+    gap: 34px;
+  }
+
+  .footer-brand h2 {
+    font-size: 37px;
+  }
+
+  .footer-brand p {
+    font-size: 15px;
+  }
+
+  .footer-booking-button {
+    width: 100%;
+    min-height: 58px;
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  .footer-divider {
+    margin-top: 38px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+/* =========================================
+   SMALL PHONES
+========================================= */
+
+@media (max-width: 390px) {
+  .site-footer {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .footer-brand h2 {
+    font-size: 34px;
+  }
+}
+.footer-developed-by {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+
+  text-align: right;
+}
+
+.footer-developed-by span {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.footer-developed-by strong {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 768px) {
+  .footer-developed-by {
+    align-items: center;
+    text-align: center;
+    margin-top: 18px;
+  }
+}

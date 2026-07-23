@@ -1,124 +1,355 @@
+/* =========================================
+   MN PREMIUM SERVICE — LOYALTY
+========================================= */
+
 .loyalty-section {
-  padding: 58px clamp(20px, 5vw, 72px);
-  background: #07265c;
+  position: relative;
+  width: 100%;
+  padding: 88px 20px;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(245, 184, 0, 0.12),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(8, 117, 45, 0.17),
+      transparent 34%
+    ),
+    linear-gradient(
+      145deg,
+      #061d49 0%,
+      #07265c 58%,
+      #0a3473 100%
+    );
 }
 
+.loyalty-section::before {
+  content: "";
+  position: absolute;
+  top: -170px;
+  right: -170px;
+  width: 420px;
+  height: 420px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
+}
+
+.loyalty-container {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 1160px);
+  margin: 0 auto;
+}
+
+/* =========================================
+   HEADING
+========================================= */
+
 .loyalty-heading {
-  max-width: 720px;
-  margin: 0 auto 30px;
+  max-width: 740px;
+  margin: 0 auto 46px;
   text-align: center;
 }
 
 .loyalty-heading span {
-  display: block;
-  margin-bottom: 8px;
+  display: inline-block;
+  margin-bottom: 12px;
   color: #f5b800;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 900;
+  line-height: 1.4;
   letter-spacing: 3px;
 }
 
 .loyalty-heading h2 {
-  margin: 0 0 10px;
+  margin: 0;
   color: #ffffff;
-  font-size: clamp(32px, 4.5vw, 48px);
-  line-height: 1.05;
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 900;
+  line-height: 1.06;
+  letter-spacing: -1.6px;
 }
 
 .loyalty-heading p {
-  margin: 0;
+  margin: 18px auto 0;
   color: #c8d6eb;
-  font-size: 16px;
+  font-size: 17px;
+  line-height: 1.65;
 }
 
+/* =========================================
+   REWARD GRID
+========================================= */
+
 .loyalty-grid {
-  max-width: 1120px;
-  margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+  gap: 17px;
 }
+
+/* =========================================
+   REWARD CARDS
+========================================= */
 
 .reward-card {
   position: relative;
   min-width: 0;
-  padding: 24px 18px;
+  min-height: 245px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 20px 26px;
   border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 22px;
-  text-align: center;
+  border-radius: 24px;
   background: rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.14);
+  backdrop-filter: blur(8px);
+  text-align: center;
+  transition:
+    transform 0.22s ease,
+    border-color 0.22s ease,
+    background 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.reward-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(245, 184, 0, 0.42);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 25px 50px rgba(0, 0, 0, 0.2);
 }
 
 .reward-card-featured {
-  border-color: #f5b800;
-  background: rgba(245, 184, 0, 0.12);
+  border: 2px solid #f5b800;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(245, 184, 0, 0.18),
+      rgba(255, 255, 255, 0.08)
+    );
+  box-shadow:
+    0 20px 46px rgba(245, 184, 0, 0.13);
 }
 
 .reward-badge {
   position: absolute;
-  top: -13px;
+  top: -14px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 7px 13px;
+  padding: 8px 15px;
   border-radius: 999px;
   color: #07265c;
   background: #f5b800;
   font-size: 10px;
   font-weight: 900;
-  letter-spacing: 1px;
+  line-height: 1.2;
+  letter-spacing: 1.1px;
   white-space: nowrap;
+  box-shadow:
+    0 8px 18px rgba(245, 184, 0, 0.25);
+}
+
+.reward-icon {
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 18px;
+  border: 1px solid rgba(245, 184, 0, 0.32);
+  border-radius: 16px;
+  color: #07265c;
+  background: #f5b800;
+  font-size: 21px;
+  font-weight: 900;
+  box-shadow:
+    0 10px 23px rgba(245, 184, 0, 0.2);
 }
 
 .reward-card h3 {
   margin: 0 0 14px;
   color: #ffffff;
   font-size: 18px;
+  font-weight: 900;
+  line-height: 1.3;
 }
 
 .reward-card strong {
   display: block;
   color: #f5b800;
-  font-size: 25px;
+  font-size: 29px;
+  font-weight: 900;
+  line-height: 1.1;
 }
 
 .reward-card p {
-  margin: 7px 0 0;
+  margin: 8px 0 0;
   color: #ffffff;
   font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
 }
 
+/* =========================================
+   PROGRAM RULES
+========================================= */
+
 .loyalty-rules {
-  max-width: 900px;
-  margin: 26px auto 0;
-  padding: 18px;
-  border-radius: 18px;
+  margin: 30px auto 0;
+  padding: 23px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 22px;
   background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(8px);
+}
+
+.loyalty-rules-heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 17px;
+  color: #ffffff;
+}
+
+.loyalty-rules-heading > span {
+  color: #f5b800;
+  font-size: 19px;
+}
+
+.loyalty-rules-heading strong {
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.loyalty-rules-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 12px 25px;
 }
 
 .loyalty-rules p {
-  margin: 7px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 0;
   color: #c8d6eb;
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: 13px;
+  line-height: 1.55;
 }
 
-.loyalty-rules p::before {
-  content: "• ";
+.loyalty-rules p > span {
   color: #f5b800;
+  font-weight: 900;
 }
 
-@media (max-width: 900px) {
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 940px) {
   .loyalty-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .reward-card {
+    min-height: 230px;
   }
 }
 
+/* =========================================
+   MOBILE
+========================================= */
+
 @media (max-width: 560px) {
   .loyalty-section {
-    padding: 48px 18px;
+    padding: 64px 14px 72px;
+  }
+
+  .loyalty-heading {
+    margin-bottom: 36px;
+  }
+
+  .loyalty-heading span {
+    margin-bottom: 10px;
+    font-size: 12px;
+    letter-spacing: 2.3px;
+  }
+
+  .loyalty-heading h2 {
+    font-size: 37px;
+    line-height: 1.05;
+    letter-spacing: -1.2px;
+  }
+
+  .loyalty-heading p {
+    max-width: 340px;
+    margin-top: 15px;
+    font-size: 16px;
+    line-height: 1.55;
   }
 
   .loyalty-grid {
     grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .reward-card {
+    min-height: 220px;
+    padding: 28px 20px 24px;
+    border-radius: 21px;
+  }
+
+  .reward-card-featured {
+    margin-top: 7px;
+  }
+
+  .reward-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 15px;
+    border-radius: 15px;
+    font-size: 20px;
+  }
+
+  .reward-card strong {
+    font-size: 28px;
+  }
+
+  .loyalty-rules {
+    margin-top: 24px;
+    padding: 20px 17px;
+    border-radius: 20px;
+  }
+
+  .loyalty-rules-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+/* =========================================
+   SMALL PHONES
+========================================= */
+
+@media (max-width: 390px) {
+  .loyalty-section {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .loyalty-heading h2 {
+    font-size: 34px;
+  }
+
+  .reward-card {
+    min-height: 210px;
   }
 }
