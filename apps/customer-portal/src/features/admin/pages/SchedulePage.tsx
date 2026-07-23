@@ -629,31 +629,7 @@ function SchedulePage() {
       weekDays,
     ])
 
-  const weekScheduleBlocks =
-    useMemo(() => {
-      const firstDate =
-        formatDateForInput(
-          weekDays[0],
-        )
-
-      const lastDate =
-        formatDateForInput(
-          weekDays[
-            weekDays.length - 1
-          ],
-        )
-
-      return scheduleBlocks.filter(
-        (block) =>
-          block.block_date >=
-            firstDate &&
-          block.block_date <=
-            lastDate,
-      )
-    }, [
-      scheduleBlocks,
-      weekDays,
-    ])
+  
 
   const weekConfirmedBookings =
     weekBookings.filter(
