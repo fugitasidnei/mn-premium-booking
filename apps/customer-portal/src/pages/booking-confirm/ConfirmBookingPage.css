@@ -1,0 +1,265 @@
+.booking-confirmation-page {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  background:
+    radial-gradient(
+      circle at top,
+      rgba(59, 130, 246, 0.14),
+      transparent 38%
+    ),
+    linear-gradient(
+      180deg,
+      #eef5ff 0%,
+      #f8fafc 52%,
+      #ffffff 100%
+    );
+}
+
+.booking-confirmation-card {
+  width: min(100%, 620px);
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow:
+    0 28px 70px rgba(15, 23, 42, 0.15),
+    0 8px 24px rgba(15, 23, 42, 0.08);
+  text-align: center;
+}
+
+.booking-confirmation-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 26px 28px 22px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  background:
+    linear-gradient(
+      135deg,
+      #0f172a 0%,
+      #17376f 100%
+    );
+  color: #ffffff;
+}
+
+.booking-confirmation-brand__name {
+  font-size: clamp(21px, 4vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.booking-confirmation-brand__subtitle {
+  color: #bfdbfe;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.booking-confirmation-icon {
+  display: flex;
+  width: 92px;
+  height: 92px;
+  align-items: center;
+  justify-content: center;
+  margin: 42px auto 24px;
+  border-radius: 50%;
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.booking-confirmation-icon--success,
+.booking-confirmation-icon--already-confirmed {
+  background: #dcfce7;
+  color: #15803d;
+  box-shadow: 0 14px 32px rgba(22, 163, 74, 0.18);
+}
+
+.booking-confirmation-icon--expired {
+  background: #fef3c7;
+  color: #b45309;
+  box-shadow: 0 14px 32px rgba(217, 119, 6, 0.16);
+}
+
+.booking-confirmation-icon--cancelled,
+.booking-confirmation-icon--not-found,
+.booking-confirmation-icon--error {
+  background: #fee2e2;
+  color: #b91c1c;
+  box-shadow: 0 14px 32px rgba(220, 38, 38, 0.14);
+}
+
+.booking-confirmation-icon--loading {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.booking-confirmation-spinner {
+  width: 42px;
+  height: 42px;
+  border: 5px solid rgba(37, 99, 235, 0.18);
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation:
+    booking-confirmation-spin 0.8s linear infinite;
+}
+
+.booking-confirmation-content {
+  padding: 0 38px;
+}
+
+.booking-confirmation-eyebrow {
+  margin: 0 0 10px;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.booking-confirmation-content h1 {
+  margin: 0;
+  color: #0f172a;
+  font-size: clamp(28px, 5vw, 40px);
+  line-height: 1.12;
+  letter-spacing: -0.04em;
+}
+
+.booking-confirmation-message {
+  max-width: 480px;
+  margin: 18px auto 0;
+  color: #475569;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.booking-confirmation-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px 32px 8px;
+}
+
+.booking-confirmation-button {
+  min-height: 48px;
+  padding: 12px 22px;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
+}
+
+.booking-confirmation-button:hover {
+  transform: translateY(-2px);
+}
+
+.booking-confirmation-button:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.25);
+  outline-offset: 3px;
+}
+
+.booking-confirmation-button--primary {
+  background: #0b4ea2;
+  color: #ffffff;
+  box-shadow: 0 12px 24px rgba(11, 78, 162, 0.22);
+}
+
+.booking-confirmation-button--primary:hover {
+  background: #083d81;
+}
+
+.booking-confirmation-button--secondary {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+}
+
+.booking-confirmation-button--secondary:hover {
+  background: #f8fafc;
+}
+
+.booking-confirmation-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 28px;
+  padding: 22px 28px 26px;
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.booking-confirmation-footer span:last-child {
+  color: #0f172a;
+  font-weight: 800;
+}
+
+@keyframes booking-confirmation-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 560px) {
+  .booking-confirmation-page {
+    padding: 18px 12px;
+  }
+
+  .booking-confirmation-card {
+    border-radius: 22px;
+  }
+
+  .booking-confirmation-brand {
+    padding: 22px 20px 18px;
+  }
+
+  .booking-confirmation-icon {
+    width: 82px;
+    height: 82px;
+    margin-top: 34px;
+    font-size: 42px;
+  }
+
+  .booking-confirmation-content {
+    padding: 0 22px;
+  }
+
+  .booking-confirmation-message {
+    font-size: 16px;
+  }
+
+  .booking-confirmation-actions {
+    flex-direction: column;
+    padding: 28px 22px 4px;
+  }
+
+  .booking-confirmation-button {
+    width: 100%;
+  }
+
+  .booking-confirmation-footer {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .booking-confirmation-spinner {
+    animation-duration: 1.5s;
+  }
+
+  .booking-confirmation-button {
+    transition: none;
+  }
+}
