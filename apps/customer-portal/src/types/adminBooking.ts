@@ -30,6 +30,23 @@ export interface AdminBooking {
   created_at: string
 }
 
+export interface CreateAdminBooking {
+  service: BookingService
+  plate_type: BookingPlateType
+  booking_date: string
+  booking_time: string
+  first_name: string
+  last_name: string
+  phone: string
+  email: string
+  vehicle: string
+  model: string
+  license_plate: string
+  notes: string | null
+  price: number
+  status: BookingStatus
+}
+
 export interface UpdateAdminBooking {
   service?: BookingService
   plate_type?: BookingPlateType

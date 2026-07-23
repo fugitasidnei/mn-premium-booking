@@ -1,12 +1,12 @@
 function SettingsPage() {
   return (
-    <div>
+    <section>
       <h1>Settings</h1>
 
       <p>
-        Manage administrative settings here.
+        Manage system settings here.
       </p>
-    </div>
+    </section>
   )
 }
 

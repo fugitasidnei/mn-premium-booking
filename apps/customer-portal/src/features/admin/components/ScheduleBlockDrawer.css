@@ -1,0 +1,252 @@
+.schedule-block-drawer {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.schedule-block-drawer__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(15, 23, 42, 0.55);
+  cursor: pointer;
+}
+
+.schedule-block-drawer__panel {
+  position: relative;
+  z-index: 1;
+  width: min(460px, 100%);
+  height: 100%;
+  overflow-y: auto;
+  background: #ffffff;
+  box-shadow:
+    -16px 0 40px
+    rgba(15, 23, 42, 0.18);
+}
+
+.schedule-block-drawer__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 26px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.schedule-block-drawer__header span {
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.schedule-block-drawer__header h2 {
+  margin: 6px 0 0;
+  color: #111827;
+  font-size: 24px;
+}
+
+.schedule-block-drawer__header p {
+  margin: 7px 0 0;
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.schedule-block-drawer__close {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.schedule-block-drawer__close:hover {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.schedule-block-form {
+  display: grid;
+  gap: 22px;
+  padding: 26px;
+}
+
+.schedule-block-form__section {
+  display: grid;
+  gap: 14px;
+}
+
+.schedule-block-form__section h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 14px;
+}
+
+.schedule-block-form label {
+  display: grid;
+  gap: 7px;
+}
+
+.schedule-block-form label > span {
+  color: #475569;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.schedule-block-form input,
+.schedule-block-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #111827;
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+}
+
+.schedule-block-form input {
+  height: 43px;
+  padding: 0 12px;
+}
+
+.schedule-block-form textarea {
+  min-height: 100px;
+  padding: 12px;
+  resize: vertical;
+}
+
+.schedule-block-form input:focus,
+.schedule-block-form textarea:focus {
+  border-color: #2563eb;
+  box-shadow:
+    0 0 0 3px
+    rgba(37, 99, 235, 0.12);
+}
+
+.schedule-block-form__types {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.schedule-block-form__type {
+  min-height: 42px;
+  border: 1px solid #dbe4f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #64748b;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.schedule-block-form__type:hover {
+  border-color: #93c5fd;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.schedule-block-form__type--active {
+  border-color: #2563eb;
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.schedule-block-form__type--active:hover {
+  border-color: #1d4ed8;
+  background: #1d4ed8;
+  color: #ffffff;
+}
+
+.schedule-block-form__row {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.schedule-block-form__error {
+  padding: 13px 14px;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.schedule-block-form__footer {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.schedule-block-form__cancel,
+.schedule-block-form__submit {
+  min-height: 44px;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.schedule-block-form__cancel {
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #475569;
+}
+
+.schedule-block-form__submit {
+  border: 0;
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.schedule-block-form__cancel:hover {
+  background: #f8fafc;
+}
+
+.schedule-block-form__submit:hover {
+  background: #1d4ed8;
+}
+
+.schedule-block-form__cancel:disabled,
+.schedule-block-form__submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+@media (max-width: 520px) {
+  .schedule-block-drawer__panel {
+    width: 100%;
+  }
+
+  .schedule-block-drawer__header,
+  .schedule-block-form {
+    padding: 20px;
+  }
+
+  .schedule-block-form__row,
+  .schedule-block-form__types,
+  .schedule-block-form__footer {
+    grid-template-columns: 1fr;
+  }
+}

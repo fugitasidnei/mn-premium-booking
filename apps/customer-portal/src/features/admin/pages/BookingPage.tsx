@@ -4,14 +4,13 @@ import {
   useState,
 } from "react"
 
+import BookingDetailsDrawer from "../components/bookings/BookingDetailsDrawer"
 import EditBookingDrawer from "../components/EditBookingDrawer"
 
 import {
   AdminBadge,
   AdminButton,
   AdminCard,
-  AdminInput,
-  AdminSelect,
   AdminTable,
 } from "../components/layout/ui"
 
@@ -35,13 +34,17 @@ type ServiceFilter =
   | "all"
   | BookingService
 
-type SortKey =
-  | "customer"
+type DateFilter =
+  | "all"
+  | "today"
+  | "tomorrow"
+  | "upcoming"
+  | "past"
+
+type SortField =
   | "date"
-  | "time"
+  | "customer"
   | "service"
-  | "vehicle"
-  | "plate"
   | "price"
   | "status"
 
@@ -49,32 +52,95 @@ type SortDirection =
   | "ascending"
   | "descending"
 
-function formatBookingDate(
-  date: string,
+interface SortSettings {
+  field: SortField
+  direction: SortDirection
+}
+
+const PAGE_SIZE_OPTIONS = [
+  10,
+  20,
+  50,
+]
+
+function normalizeText(
+  value: unknown,
+): string {
+  return String(value ?? "")
+    .trim()
+    .toLocaleLowerCase()
+}
+
+function getLocalDateString(
+  date = new Date(),
+): string {
+  const year = date.getFullYear()
+
+  const month = String(
+    date.getMonth() + 1,
+  ).padStart(2, "0")
+
+  const day = String(
+    date.getDate(),
+  ).padStart(2, "0")
+
+  return `${year}-${month}-${day}`
+}
+
+function getTomorrowDateString(): string {
+  const tomorrow = new Date()
+
+  tomorrow.setDate(
+    tomorrow.getDate() + 1,
+  )
+
+  return getLocalDateString(tomorrow)
+}
+
+function formatDate(
+  value: string,
 ): string {
   const [year, month, day] =
-    date.split("-")
+    value.split("-")
 
   if (!year || !month || !day) {
-    return date
+    return value
   }
 
   return `${month}/${day}/${year}`
 }
 
-function formatBookingTime(
-  time: string,
+function formatTime(
+  value: string,
 ): string {
-  return time.slice(0, 5)
+  return value.slice(0, 5)
+}
+
+function formatCurrency(
+  value: number,
+): string {
+  return new Intl.NumberFormat(
+    "en-US",
+    {
+      style: "currency",
+      currency: "USD",
+    },
+  ).format(value)
 }
 
 function getCustomerName(
   booking: AdminBooking,
 ): string {
-  return `${booking.first_name} ${booking.last_name}`.trim()
+  return [
+    booking.first_name,
+    booking.last_name,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .trim()
 }
 
-function getServiceName(
+function getServiceLabel(
   service: BookingService,
 ): string {
   if (service === "premium") {
@@ -84,17 +150,7 @@ function getServiceName(
   return "Exterior Wash"
 }
 
-function getPlateName(
-  plateType: AdminBooking["plate_type"],
-): string {
-  if (plateType === "yellow") {
-    return "Yellow Plate"
-  }
-
-  return "White Plate"
-}
-
-function getStatusName(
+function getStatusLabel(
   status: BookingStatus,
 ): string {
   if (status === "confirmed") {
@@ -108,42 +164,158 @@ function getStatusName(
   return "Pending"
 }
 
-function getSortValue(
-  booking: AdminBooking,
-  sortKey: SortKey,
-): string | number {
-  switch (sortKey) {
-    case "customer":
-      return getCustomerName(
-        booking,
-      ).toLowerCase()
-
-    case "date":
-      return `${booking.booking_date} ${booking.booking_time}`
-
-    case "time":
-      return booking.booking_time
-
-    case "service":
-      return getServiceName(
-        booking.service,
-      ).toLowerCase()
-
-    case "vehicle":
-      return `${booking.vehicle} ${booking.model}`.toLowerCase()
-
-    case "plate":
-      return booking.license_plate.toLowerCase()
-
-    case "price":
-      return Number(booking.price)
-
-    case "status":
-      return booking.status
-
-    default:
-      return ""
+function getStatusVariant(
+  status: BookingStatus,
+):
+  | "pending"
+  | "confirmed"
+  | "cancelled" {
+  if (status === "confirmed") {
+    return "confirmed"
   }
+
+  if (status === "cancelled") {
+    return "cancelled"
+  }
+
+  return "pending"
+}
+
+function getBookingPrice(
+  booking: AdminBooking,
+): number {
+  return Number(booking.price) || 0
+}
+
+function getBookingDateTime(
+  booking: AdminBooking,
+): string {
+  return [
+    booking.booking_date,
+    booking.booking_time,
+  ].join(" ")
+}
+
+function matchesSearch(
+  booking: AdminBooking,
+  searchTerm: string,
+): boolean {
+  if (!searchTerm) {
+    return true
+  }
+
+  const searchableContent = [
+    booking.first_name,
+    booking.last_name,
+    getCustomerName(booking),
+    booking.phone,
+    booking.email,
+    booking.vehicle,
+    booking.model,
+    booking.license_plate,
+    booking.booking_date,
+    booking.booking_time,
+    booking.service,
+    getServiceLabel(booking.service),
+    booking.status,
+    getStatusLabel(booking.status),
+  ]
+    .map(normalizeText)
+    .join(" ")
+
+  return searchableContent.includes(
+    searchTerm,
+  )
+}
+
+function matchesDateFilter(
+  booking: AdminBooking,
+  dateFilter: DateFilter,
+): boolean {
+  const today = getLocalDateString()
+
+  if (dateFilter === "today") {
+    return booking.booking_date === today
+  }
+
+  if (dateFilter === "tomorrow") {
+    return (
+      booking.booking_date ===
+      getTomorrowDateString()
+    )
+  }
+
+  if (dateFilter === "upcoming") {
+    return booking.booking_date >= today
+  }
+
+  if (dateFilter === "past") {
+    return booking.booking_date < today
+  }
+
+  return true
+}
+
+function compareBookings(
+  firstBooking: AdminBooking,
+  secondBooking: AdminBooking,
+  sortSettings: SortSettings,
+): number {
+  let comparison = 0
+
+  if (sortSettings.field === "date") {
+    comparison = getBookingDateTime(
+      firstBooking,
+    ).localeCompare(
+      getBookingDateTime(secondBooking),
+    )
+  }
+
+  if (
+    sortSettings.field === "customer"
+  ) {
+    comparison = getCustomerName(
+      firstBooking,
+    ).localeCompare(
+      getCustomerName(secondBooking),
+    )
+  }
+
+  if (
+    sortSettings.field === "service"
+  ) {
+    comparison = getServiceLabel(
+      firstBooking.service,
+    ).localeCompare(
+      getServiceLabel(
+        secondBooking.service,
+      ),
+    )
+  }
+
+  if (sortSettings.field === "price") {
+    comparison =
+      getBookingPrice(firstBooking) -
+      getBookingPrice(secondBooking)
+  }
+
+  if (
+    sortSettings.field === "status"
+  ) {
+    comparison =
+      firstBooking.status.localeCompare(
+        secondBooking.status,
+      )
+  }
+
+  if (
+    sortSettings.direction ===
+    "descending"
+  ) {
+    return comparison * -1
+  }
+
+  return comparison
 }
 
 function BookingPage() {
@@ -157,196 +329,204 @@ function BookingPage() {
     cancelBooking,
   } = useAdminBookings()
 
-  const [searchTerm, setSearchTerm] =
+  const [search, setSearch] =
     useState("")
-
-  const [statusFilter, setStatusFilter] =
-    useState<StatusFilter>("all")
-
-  const [serviceFilter, setServiceFilter] =
-    useState<ServiceFilter>("all")
-
-  const [dateFilter, setDateFilter] =
-    useState("")
-
-  const [sortKey, setSortKey] =
-    useState<SortKey>("date")
 
   const [
-    sortDirection,
-    setSortDirection,
-  ] = useState<SortDirection>(
-    "ascending",
-  )
+    statusFilter,
+    setStatusFilter,
+  ] = useState<StatusFilter>("all")
 
-  const [currentPage, setCurrentPage] =
-    useState(1)
+  const [
+    serviceFilter,
+    setServiceFilter,
+  ] = useState<ServiceFilter>("all")
+
+  const [
+    dateFilter,
+    setDateFilter,
+  ] = useState<DateFilter>("all")
+
+  const [
+    sortSettings,
+    setSortSettings,
+  ] = useState<SortSettings>({
+    field: "date",
+    direction: "ascending",
+  })
 
   const [pageSize, setPageSize] =
     useState(10)
 
-  const [
-    selectedBooking,
-    setSelectedBooking,
-  ] = useState<AdminBooking | null>(null)
+  const [currentPage, setCurrentPage] =
+    useState(1)
 
   const [
-    isEditDrawerOpen,
-    setIsEditDrawerOpen,
+    selectedBookingId,
+    setSelectedBookingId,
+  ] = useState<string | null>(null)
+
+  const [
+    isEditBookingOpen,
+    setIsEditBookingOpen,
   ] = useState(false)
 
-  const filteredBookings = useMemo(() => {
-    const normalizedSearch =
-      searchTerm.trim().toLowerCase()
+  const normalizedSearch =
+    normalizeText(search)
 
-    return bookings.filter((booking) => {
-      const matchesStatus =
-        statusFilter === "all" ||
-        booking.status === statusFilter
-
-      const matchesService =
-        serviceFilter === "all" ||
-        booking.service === serviceFilter
-
-      const matchesDate =
-        !dateFilter ||
-        booking.booking_date === dateFilter
-
-      if (
-        !matchesStatus ||
-        !matchesService ||
-        !matchesDate
-      ) {
-        return false
+  const selectedBooking =
+    useMemo(() => {
+      if (!selectedBookingId) {
+        return null
       }
 
-      if (!normalizedSearch) {
-        return true
-      }
-
-      const searchableContent = [
-        booking.first_name,
-        booking.last_name,
-        booking.phone,
-        booking.email,
-        booking.vehicle,
-        booking.model,
-        booking.license_plate,
-        booking.service,
-        booking.status,
-        booking.booking_date,
-        booking.booking_time,
-      ]
-        .join(" ")
-        .toLowerCase()
-
-      return searchableContent.includes(
-        normalizedSearch,
+      return (
+        bookings.find(
+          (booking) =>
+            booking.id ===
+            selectedBookingId,
+        ) ?? null
       )
-    })
-  }, [
-    bookings,
-    searchTerm,
-    statusFilter,
-    serviceFilter,
-    dateFilter,
-  ])
+    }, [
+      bookings,
+      selectedBookingId,
+    ])
 
-  const sortedBookings = useMemo(() => {
-    return [...filteredBookings].sort(
-      (firstBooking, secondBooking) => {
-        const firstValue = getSortValue(
-          firstBooking,
-          sortKey,
+  const summary = useMemo(() => {
+    const activeBookings =
+      bookings.filter(
+        (booking) =>
+          booking.status !== "cancelled",
+      )
+
+    const totalRevenue =
+      activeBookings.reduce(
+        (total, booking) =>
+          total +
+          getBookingPrice(booking),
+        0,
+      )
+
+    return {
+      total: bookings.length,
+
+      pending: bookings.filter(
+        (booking) =>
+          booking.status === "pending",
+      ).length,
+
+      confirmed: bookings.filter(
+        (booking) =>
+          booking.status === "confirmed",
+      ).length,
+
+      cancelled: bookings.filter(
+        (booking) =>
+          booking.status === "cancelled",
+      ).length,
+
+      totalRevenue,
+
+      averageTicket:
+        activeBookings.length > 0
+          ? totalRevenue /
+            activeBookings.length
+          : 0,
+
+      exterior: activeBookings.filter(
+        (booking) =>
+          booking.service === "exterior",
+      ).length,
+
+      premium: activeBookings.filter(
+        (booking) =>
+          booking.service === "premium",
+      ).length,
+    }
+  }, [bookings])
+
+  const filteredBookings =
+    useMemo(() => {
+      return [...bookings]
+        .filter((booking) =>
+          matchesSearch(
+            booking,
+            normalizedSearch,
+          ),
         )
+        .filter((booking) => {
+          if (statusFilter === "all") {
+            return true
+          }
 
-        const secondValue = getSortValue(
-          secondBooking,
-          sortKey,
-        )
-
-        let comparison = 0
-
-        if (
-          typeof firstValue === "number" &&
-          typeof secondValue === "number"
-        ) {
-          comparison =
-            firstValue - secondValue
-        } else {
-          comparison = String(
-            firstValue,
-          ).localeCompare(
-            String(secondValue),
-            undefined,
-            {
-              numeric: true,
-              sensitivity: "base",
-            },
+          return (
+            booking.status ===
+            statusFilter
           )
-        }
+        })
+        .filter((booking) => {
+          if (serviceFilter === "all") {
+            return true
+          }
 
-        return sortDirection === "ascending"
-          ? comparison
-          : comparison * -1
-      },
-    )
-  }, [
-    filteredBookings,
-    sortKey,
-    sortDirection,
-  ])
+          return (
+            booking.service ===
+            serviceFilter
+          )
+        })
+        .filter((booking) =>
+          matchesDateFilter(
+            booking,
+            dateFilter,
+          ),
+        )
+        .sort(
+          (
+            firstBooking,
+            secondBooking,
+          ) =>
+            compareBookings(
+              firstBooking,
+              secondBooking,
+              sortSettings,
+            ),
+        )
+    }, [
+      bookings,
+      normalizedSearch,
+      statusFilter,
+      serviceFilter,
+      dateFilter,
+      sortSettings,
+    ])
 
   const totalPages = Math.max(
     1,
     Math.ceil(
-      sortedBookings.length / pageSize,
+      filteredBookings.length /
+        pageSize,
     ),
   )
 
-  const paginatedBookings = useMemo(() => {
-    const startIndex =
-      (currentPage - 1) * pageSize
+  const paginatedBookings =
+    useMemo(() => {
+      const firstIndex =
+        (currentPage - 1) * pageSize
 
-    return sortedBookings.slice(
-      startIndex,
-      startIndex + pageSize,
-    )
-  }, [
-    sortedBookings,
-    currentPage,
-    pageSize,
-  ])
-
-  const firstVisibleBooking =
-    sortedBookings.length === 0
-      ? 0
-      : (currentPage - 1) * pageSize + 1
-
-  const lastVisibleBooking = Math.min(
-    currentPage * pageSize,
-    sortedBookings.length,
-  )
-
-  const pendingCount = bookings.filter(
-    (booking) =>
-      booking.status === "pending",
-  ).length
-
-  const confirmedCount = bookings.filter(
-    (booking) =>
-      booking.status === "confirmed",
-  ).length
-
-  const cancelledCount = bookings.filter(
-    (booking) =>
-      booking.status === "cancelled",
-  ).length
+      return filteredBookings.slice(
+        firstIndex,
+        firstIndex + pageSize,
+      )
+    }, [
+      currentPage,
+      filteredBookings,
+      pageSize,
+    ])
 
   useEffect(() => {
     setCurrentPage(1)
   }, [
-    searchTerm,
+    search,
     statusFilter,
     serviceFilter,
     dateFilter,
@@ -362,70 +542,158 @@ function BookingPage() {
     totalPages,
   ])
 
-  function handleSort(
-    selectedSortKey: SortKey,
-  ) {
-    if (sortKey === selectedSortKey) {
-      setSortDirection(
-        (
-          currentDirection,
-        ) =>
-          currentDirection === "ascending"
-            ? "descending"
-            : "ascending",
-      )
-
-      return
+  useEffect(() => {
+    if (
+      selectedBookingId &&
+      !selectedBooking
+    ) {
+      setSelectedBookingId(null)
     }
+  }, [
+    selectedBooking,
+    selectedBookingId,
+  ])
 
-    setSortKey(selectedSortKey)
-    setSortDirection("ascending")
+  function updateSort(
+    field: SortField,
+  ) {
+    setSortSettings(
+      (currentSettings) => {
+        if (
+          currentSettings.field === field
+        ) {
+          return {
+            field,
+            direction:
+              currentSettings.direction ===
+              "ascending"
+                ? "descending"
+                : "ascending",
+          }
+        }
+
+        return {
+          field,
+          direction: "ascending",
+        }
+      },
+    )
   }
 
   function getSortSymbol(
-    selectedSortKey: SortKey,
+    field: SortField,
   ): string {
-    if (sortKey !== selectedSortKey) {
+    if (sortSettings.field !== field) {
       return "↕"
     }
 
-    return sortDirection === "ascending"
-      ? "↑"
-      : "↓"
-  }
+    if (
+      sortSettings.direction ===
+      "ascending"
+    ) {
+      return "↑"
+    }
 
-  function openEditDrawer(
-    booking: AdminBooking,
-  ) {
-    setSelectedBooking(booking)
-    setIsEditDrawerOpen(true)
-  }
-
-  function closeEditDrawer() {
-    setIsEditDrawerOpen(false)
-    setSelectedBooking(null)
+    return "↓"
   }
 
   function clearFilters() {
-    setSearchTerm("")
+    setSearch("")
     setStatusFilter("all")
     setServiceFilter("all")
-    setDateFilter("")
+    setDateFilter("all")
     setCurrentPage(1)
+  }
+
+  function applySummaryFilter(
+    status: StatusFilter,
+  ) {
+    setStatusFilter(status)
+    setCurrentPage(1)
+  }
+
+  function openBookingDetails(
+    bookingId: string,
+  ) {
+    setSelectedBookingId(bookingId)
+  }
+
+  function closeBookingDetails() {
+    setSelectedBookingId(null)
+    setIsEditBookingOpen(false)
+  }
+
+  function openEditBooking() {
+    if (!selectedBooking) {
+      return
+    }
+
+    setIsEditBookingOpen(true)
+  }
+
+  function closeEditBooking() {
+    setIsEditBookingOpen(false)
+  }
+
+  async function handleConfirm(
+    bookingId: string,
+  ) {
+    try {
+      await confirmBooking(bookingId)
+    } catch (confirmError) {
+      console.error(
+        "Error confirming booking:",
+        confirmError,
+      )
+    }
   }
 
   async function handleCancel(
     bookingId: string,
-  ): Promise<void> {
-    const shouldCancel = window.confirm(
-      "Are you sure you want to cancel this booking?",
-    )
+  ) {
+    const shouldCancel =
+      window.confirm(
+        "Are you sure you want to cancel this booking?",
+      )
 
     if (!shouldCancel) {
       return
     }
 
-    await cancelBooking(bookingId)
+    try {
+      await cancelBooking(bookingId)
+    } catch (cancelError) {
+      console.error(
+        "Error cancelling booking:",
+        cancelError,
+      )
+    }
+  }
+
+  async function handleDrawerConfirm(
+    bookingId: string,
+  ) {
+    try {
+      await confirmBooking(bookingId)
+    } catch (confirmError) {
+      console.error(
+        "Error confirming booking:",
+        confirmError,
+      )
+    }
+  }
+
+  async function handleDrawerCancel(
+    bookingId: string,
+  ) {
+    try {
+      await cancelBooking(bookingId)
+    } catch (cancelError) {
+      console.error(
+        "Error cancelling booking:",
+        cancelError,
+      )
+    }
   }
 
   return (
@@ -433,120 +701,292 @@ function BookingPage() {
       <section className="booking-manager">
         <header className="booking-manager__header">
           <div>
-            <h1>Bookings</h1>
+            <h1>Booking Manager</h1>
 
             <p>
-              Manage all customer appointments.
+              Search, organize and manage
+              customer appointments.
             </p>
           </div>
 
-          <AdminButton
-            variant="primary"
-            disabled={isLoading}
-            onClick={() => {
-              void refreshBookings()
-            }}
-          >
-            Refresh
-          </AdminButton>
+          <div className="booking-manager__header-actions">
+            <AdminButton
+              variant="secondary"
+              onClick={clearFilters}
+            >
+              Clear filters
+            </AdminButton>
+
+            <AdminButton
+              variant="primary"
+              disabled={isLoading}
+              onClick={() => {
+                void refreshBookings()
+              }}
+            >
+              {isLoading
+                ? "Refreshing..."
+                : "Refresh bookings"}
+            </AdminButton>
+          </div>
         </header>
 
         <div className="booking-manager__summary">
-          <AdminCard className="booking-summary-card">
-            <span>Total Bookings</span>
-            <strong>{bookings.length}</strong>
+          <button
+            className={[
+              "booking-summary-button",
+              statusFilter === "all"
+                ? "booking-summary-button--active"
+                : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+            type="button"
+            onClick={() => {
+              applySummaryFilter("all")
+            }}
+          >
+            <AdminCard className="booking-summary-card">
+              <span>Total Bookings</span>
+
+              <strong>
+                {summary.total}
+              </strong>
+            </AdminCard>
+          </button>
+
+          <button
+            className={[
+              "booking-summary-button",
+              statusFilter === "pending"
+                ? "booking-summary-button--active"
+                : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+            type="button"
+            onClick={() => {
+              applySummaryFilter("pending")
+            }}
+          >
+            <AdminCard className="booking-summary-card">
+              <span>Pending</span>
+
+              <strong>
+                {summary.pending}
+              </strong>
+            </AdminCard>
+          </button>
+
+          <button
+            className={[
+              "booking-summary-button",
+              statusFilter === "confirmed"
+                ? "booking-summary-button--active"
+                : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+            type="button"
+            onClick={() => {
+              applySummaryFilter(
+                "confirmed",
+              )
+            }}
+          >
+            <AdminCard className="booking-summary-card">
+              <span>Confirmed</span>
+
+              <strong>
+                {summary.confirmed}
+              </strong>
+            </AdminCard>
+          </button>
+
+          <button
+            className={[
+              "booking-summary-button",
+              statusFilter === "cancelled"
+                ? "booking-summary-button--active"
+                : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+            type="button"
+            onClick={() => {
+              applySummaryFilter(
+                "cancelled",
+              )
+            }}
+          >
+            <AdminCard className="booking-summary-card">
+              <span>Cancelled</span>
+
+              <strong>
+                {summary.cancelled}
+              </strong>
+            </AdminCard>
+          </button>
+        </div>
+
+        <div className="booking-manager__metrics">
+          <AdminCard className="booking-metric-card">
+            <span>
+              Scheduled Revenue
+            </span>
+
+            <strong>
+              {formatCurrency(
+                summary.totalRevenue,
+              )}
+            </strong>
           </AdminCard>
 
-          <AdminCard className="booking-summary-card">
-            <span>Pending</span>
-            <strong>{pendingCount}</strong>
+          <AdminCard className="booking-metric-card">
+            <span>Average Ticket</span>
+
+            <strong>
+              {formatCurrency(
+                summary.averageTicket,
+              )}
+            </strong>
           </AdminCard>
 
-          <AdminCard className="booking-summary-card">
-            <span>Confirmed</span>
-            <strong>{confirmedCount}</strong>
+          <AdminCard className="booking-metric-card">
+            <span>Exterior Wash</span>
+
+            <strong>
+              {summary.exterior}
+            </strong>
           </AdminCard>
 
-          <AdminCard className="booking-summary-card">
-            <span>Cancelled</span>
-            <strong>{cancelledCount}</strong>
+          <AdminCard className="booking-metric-card">
+            <span>Premium Finish</span>
+
+            <strong>
+              {summary.premium}
+            </strong>
           </AdminCard>
         </div>
 
         <AdminCard className="booking-manager__filters-card">
           <div className="booking-manager__filters">
-            <AdminInput
-              type="search"
-              label="Search"
-              placeholder="Customer, vehicle, phone or plate..."
-              value={searchTerm}
-              onChange={(event) => {
-                setSearchTerm(
-                  event.target.value,
-                )
-              }}
-            />
+            <label className="admin-field">
+              <span className="admin-field__label">
+                Search
+              </span>
 
-            <AdminSelect
-              label="Status"
-              value={statusFilter}
-              onChange={(event) => {
-                setStatusFilter(
-                  event.target
-                    .value as StatusFilter,
-                )
-              }}
-            >
-              <option value="all">
-                All Statuses
-              </option>
+              <input
+                className="admin-input"
+                type="search"
+                value={search}
+                placeholder="Name, phone, email, vehicle, model or plate..."
+                onChange={(event) => {
+                  setSearch(
+                    event.target.value,
+                  )
+                }}
+              />
+            </label>
 
-              <option value="pending">
-                Pending
-              </option>
+            <label className="admin-field">
+              <span className="admin-field__label">
+                Date
+              </span>
 
-              <option value="confirmed">
-                Confirmed
-              </option>
+              <select
+                className="admin-select"
+                value={dateFilter}
+                onChange={(event) => {
+                  setDateFilter(
+                    event.target
+                      .value as DateFilter,
+                  )
+                }}
+              >
+                <option value="all">
+                  All dates
+                </option>
 
-              <option value="cancelled">
-                Cancelled
-              </option>
-            </AdminSelect>
+                <option value="today">
+                  Today
+                </option>
 
-            <AdminSelect
-              label="Service"
-              value={serviceFilter}
-              onChange={(event) => {
-                setServiceFilter(
-                  event.target
-                    .value as ServiceFilter,
-                )
-              }}
-            >
-              <option value="all">
-                All Services
-              </option>
+                <option value="tomorrow">
+                  Tomorrow
+                </option>
 
-              <option value="exterior">
-                Exterior Wash
-              </option>
+                <option value="upcoming">
+                  Upcoming
+                </option>
 
-              <option value="premium">
-                Premium Finish
-              </option>
-            </AdminSelect>
+                <option value="past">
+                  Past
+                </option>
+              </select>
+            </label>
 
-            <AdminInput
-              type="date"
-              label="Booking Date"
-              value={dateFilter}
-              onChange={(event) => {
-                setDateFilter(
-                  event.target.value,
-                )
-              }}
-            />
+            <label className="admin-field">
+              <span className="admin-field__label">
+                Status
+              </span>
+
+              <select
+                className="admin-select"
+                value={statusFilter}
+                onChange={(event) => {
+                  setStatusFilter(
+                    event.target
+                      .value as StatusFilter,
+                  )
+                }}
+              >
+                <option value="all">
+                  All statuses
+                </option>
+
+                <option value="pending">
+                  Pending
+                </option>
+
+                <option value="confirmed">
+                  Confirmed
+                </option>
+
+                <option value="cancelled">
+                  Cancelled
+                </option>
+              </select>
+            </label>
+
+            <label className="admin-field">
+              <span className="admin-field__label">
+                Service
+              </span>
+
+              <select
+                className="admin-select"
+                value={serviceFilter}
+                onChange={(event) => {
+                  setServiceFilter(
+                    event.target
+                      .value as ServiceFilter,
+                  )
+                }}
+              >
+                <option value="all">
+                  All services
+                </option>
+
+                <option value="exterior">
+                  Exterior Wash
+                </option>
+
+                <option value="premium">
+                  Premium Finish
+                </option>
+              </select>
+            </label>
 
             <div className="booking-manager__clear-filter">
               <AdminButton
@@ -554,7 +994,7 @@ function BookingPage() {
                 fullWidth
                 onClick={clearFilters}
               >
-                Clear Filters
+                Clear
               </AdminButton>
             </div>
           </div>
@@ -567,25 +1007,21 @@ function BookingPage() {
         )}
 
         <div className="booking-manager__results">
-          <span>
+          <div>
             Showing{" "}
             <strong>
-              {firstVisibleBooking}
-            </strong>
-            {" - "}
+              {paginatedBookings.length}
+            </strong>{" "}
+            of{" "}
             <strong>
-              {lastVisibleBooking}
-            </strong>
-            {" of "}
-            <strong>
-              {sortedBookings.length}
-            </strong>
-            {" filtered bookings"}
-          </span>
+              {filteredBookings.length}
+            </strong>{" "}
+            matching bookings.
+          </div>
 
           <div className="booking-manager__page-size">
             <label htmlFor="booking-page-size">
-              Rows per page
+              Results per page
             </label>
 
             <select
@@ -594,56 +1030,51 @@ function BookingPage() {
               value={pageSize}
               onChange={(event) => {
                 setPageSize(
-                  Number(event.target.value),
+                  Number(
+                    event.target.value,
+                  ),
                 )
               }}
             >
-              <option value={10}>10</option>
-              <option value={25}>25</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option>
+              {PAGE_SIZE_OPTIONS.map(
+                (option) => (
+                  <option
+                    key={option}
+                    value={option}
+                  >
+                    {option}
+                  </option>
+                ),
+              )}
             </select>
           </div>
         </div>
 
-        {isLoading ? (
+        {isLoading &&
+        bookings.length === 0 ? (
           <div className="booking-manager__message">
             Loading bookings...
           </div>
-        ) : sortedBookings.length === 0 ? (
+        ) : filteredBookings.length ===
+          0 ? (
           <div className="booking-manager__message">
-            No bookings found.
+            No bookings match the selected
+            filters.
           </div>
         ) : (
-          <AdminTable minWidth={1180}>
+          <AdminTable minWidth={1280}>
             <thead>
               <tr>
                 <th>
                   <button
-                    type="button"
                     className="booking-sort-button"
-                    onClick={() => {
-                      handleSort("customer")
-                    }}
-                  >
-                    Customer
-                    <span>
-                      {getSortSymbol(
-                        "customer",
-                      )}
-                    </span>
-                  </button>
-                </th>
-
-                <th>
-                  <button
                     type="button"
-                    className="booking-sort-button"
                     onClick={() => {
-                      handleSort("date")
+                      updateSort("date")
                     }}
                   >
                     Date
+
                     <span>
                       {getSortSymbol("date")}
                     </span>
@@ -652,28 +1083,36 @@ function BookingPage() {
 
                 <th>
                   <button
-                    type="button"
                     className="booking-sort-button"
+                    type="button"
                     onClick={() => {
-                      handleSort("time")
+                      updateSort(
+                        "customer",
+                      )
                     }}
                   >
-                    Time
+                    Customer
+
                     <span>
-                      {getSortSymbol("time")}
+                      {getSortSymbol(
+                        "customer",
+                      )}
                     </span>
                   </button>
                 </th>
 
+                <th>Contact</th>
+
                 <th>
                   <button
-                    type="button"
                     className="booking-sort-button"
+                    type="button"
                     onClick={() => {
-                      handleSort("service")
+                      updateSort("service")
                     }}
                   >
                     Service
+
                     <span>
                       {getSortSymbol(
                         "service",
@@ -682,18 +1121,21 @@ function BookingPage() {
                   </button>
                 </th>
 
+                <th>Vehicle</th>
+
                 <th>
                   <button
-                    type="button"
                     className="booking-sort-button"
+                    type="button"
                     onClick={() => {
-                      handleSort("vehicle")
+                      updateSort("price")
                     }}
                   >
-                    Vehicle
+                    Price
+
                     <span>
                       {getSortSymbol(
-                        "vehicle",
+                        "price",
                       )}
                     </span>
                   </button>
@@ -701,43 +1143,14 @@ function BookingPage() {
 
                 <th>
                   <button
-                    type="button"
                     className="booking-sort-button"
-                    onClick={() => {
-                      handleSort("plate")
-                    }}
-                  >
-                    Plate
-                    <span>
-                      {getSortSymbol("plate")}
-                    </span>
-                  </button>
-                </th>
-
-                <th>
-                  <button
                     type="button"
-                    className="booking-sort-button"
                     onClick={() => {
-                      handleSort("price")
-                    }}
-                  >
-                    Price
-                    <span>
-                      {getSortSymbol("price")}
-                    </span>
-                  </button>
-                </th>
-
-                <th>
-                  <button
-                    type="button"
-                    className="booking-sort-button"
-                    onClick={() => {
-                      handleSort("status")
+                      updateSort("status")
                     }}
                   >
                     Status
+
                     <span>
                       {getSortSymbol(
                         "status",
@@ -753,12 +1166,55 @@ function BookingPage() {
             <tbody>
               {paginatedBookings.map(
                 (booking) => {
-                  const isUpdating =
+                  const isActionLoading =
                     actionBookingId ===
                     booking.id
 
                   return (
-                    <tr key={booking.id}>
+                    <tr
+                      className={[
+                        "booking-row",
+                        `booking-row--${booking.status}`,
+                      ].join(" ")}
+                      key={booking.id}
+                      tabIndex={0}
+                      onClick={() => {
+                        openBookingDetails(
+                          booking.id,
+                        )
+                      }}
+                      onKeyDown={(
+                        event,
+                      ) => {
+                        if (
+                          event.key ===
+                            "Enter" ||
+                          event.key === " "
+                        ) {
+                          event.preventDefault()
+
+                          openBookingDetails(
+                            booking.id,
+                          )
+                        }
+                      }}
+                    >
+                      <td>
+                        <div className="booking-table-cell">
+                          <strong>
+                            {formatDate(
+                              booking.booking_date,
+                            )}
+                          </strong>
+
+                          <small>
+                            {formatTime(
+                              booking.booking_time,
+                            )}
+                          </small>
+                        </div>
+                      </td>
+
                       <td>
                         <div className="booking-table-cell">
                           <strong>
@@ -768,39 +1224,39 @@ function BookingPage() {
                           </strong>
 
                           <small>
-                            {booking.phone}
-                          </small>
-
-                          <small>
-                            {booking.email}
+                            {booking.email ||
+                              "No email"}
                           </small>
                         </div>
                       </td>
 
                       <td>
-                        {formatBookingDate(
-                          booking.booking_date,
-                        )}
-                      </td>
+                        <div className="booking-table-cell">
+                          <strong>
+                            {booking.phone ||
+                              "No phone"}
+                          </strong>
 
-                      <td>
-                        {formatBookingTime(
-                          booking.booking_time,
-                        )}
+                          <small>
+                            {booking.email ||
+                              "No email"}
+                          </small>
+                        </div>
                       </td>
 
                       <td>
                         <div className="booking-table-cell">
                           <strong>
-                            {getServiceName(
+                            {getServiceLabel(
                               booking.service,
                             )}
                           </strong>
 
                           <small>
-                            {getPlateName(
-                              booking.plate_type,
-                            )}
+                            {booking.plate_type ===
+                            "yellow"
+                              ? "Yellow plate"
+                              : "White plate"}
                           </small>
                         </div>
                       </td>
@@ -808,37 +1264,39 @@ function BookingPage() {
                       <td>
                         <div className="booking-table-cell">
                           <strong>
-                            {booking.vehicle}
+                            {[
+                              booking.vehicle,
+                              booking.model,
+                            ]
+                              .filter(Boolean)
+                              .join(" ") ||
+                              "Not informed"}
                           </strong>
 
                           <small>
-                            {booking.model ||
-                              "No model"}
+                            {booking.license_plate ||
+                              "No plate"}
                           </small>
                         </div>
                       </td>
 
                       <td>
-                        {booking.license_plate ||
-                          "—"}
-                      </td>
-
-                      <td>
                         <strong>
-                          $
-                          {Number(
-                            booking.price,
-                          ).toFixed(2)}
+                          {formatCurrency(
+                            getBookingPrice(
+                              booking,
+                            ),
+                          )}
                         </strong>
                       </td>
 
                       <td>
                         <AdminBadge
-                          variant={
-                            booking.status
-                          }
+                          variant={getStatusVariant(
+                            booking.status,
+                          )}
                         >
-                          {getStatusName(
+                          {getStatusLabel(
                             booking.status,
                           )}
                         </AdminBadge>
@@ -848,23 +1306,35 @@ function BookingPage() {
                         <div className="booking-manager__actions">
                           <AdminButton
                             variant="secondary"
-                            disabled={isUpdating}
-                            onClick={() => {
-                              openEditDrawer(
-                                booking,
+                            disabled={
+                              isActionLoading
+                            }
+                            onClick={(
+                              event,
+                            ) => {
+                              event.stopPropagation()
+
+                              openBookingDetails(
+                                booking.id,
                               )
                             }}
                           >
-                            Edit
+                            Details
                           </AdminButton>
 
                           {booking.status !==
                             "confirmed" && (
                             <AdminButton
                               variant="success"
-                              disabled={isUpdating}
-                              onClick={() => {
-                                void confirmBooking(
+                              disabled={
+                                isActionLoading
+                              }
+                              onClick={(
+                                event,
+                              ) => {
+                                event.stopPropagation()
+
+                                void handleConfirm(
                                   booking.id,
                                 )
                               }}
@@ -877,8 +1347,14 @@ function BookingPage() {
                             "cancelled" && (
                             <AdminButton
                               variant="danger"
-                              disabled={isUpdating}
-                              onClick={() => {
+                              disabled={
+                                isActionLoading
+                              }
+                              onClick={(
+                                event,
+                              ) => {
+                                event.stopPropagation()
+
                                 void handleCancel(
                                   booking.id,
                                 )
@@ -897,15 +1373,18 @@ function BookingPage() {
           </AdminTable>
         )}
 
-        {sortedBookings.length > 0 && (
+        {filteredBookings.length > 0 && (
           <div className="booking-pagination">
             <AdminButton
               variant="secondary"
               disabled={currentPage === 1}
               onClick={() => {
                 setCurrentPage(
-                  (page) =>
-                    Math.max(1, page - 1),
+                  (currentValue) =>
+                    Math.max(
+                      1,
+                      currentValue - 1,
+                    ),
                 )
               }}
             >
@@ -914,22 +1393,27 @@ function BookingPage() {
 
             <span>
               Page{" "}
-              <strong>{currentPage}</strong>
-              {" of "}
-              <strong>{totalPages}</strong>
+              <strong>
+                {currentPage}
+              </strong>{" "}
+              of{" "}
+              <strong>
+                {totalPages}
+              </strong>
             </span>
 
             <AdminButton
               variant="secondary"
               disabled={
-                currentPage === totalPages
+                currentPage ===
+                totalPages
               }
               onClick={() => {
                 setCurrentPage(
-                  (page) =>
+                  (currentValue) =>
                     Math.min(
                       totalPages,
-                      page + 1,
+                      currentValue + 1,
                     ),
                 )
               }}
@@ -940,10 +1424,30 @@ function BookingPage() {
         )}
       </section>
 
+      <BookingDetailsDrawer
+        booking={
+          isEditBookingOpen
+            ? null
+            : selectedBooking
+        }
+        allBookings={bookings}
+        actionBookingId={
+          actionBookingId
+        }
+        onClose={closeBookingDetails}
+        onEdit={openEditBooking}
+        onConfirm={
+          handleDrawerConfirm
+        }
+        onCancel={
+          handleDrawerCancel
+        }
+      />
+
       <EditBookingDrawer
         booking={selectedBooking}
-        isOpen={isEditDrawerOpen}
-        onClose={closeEditDrawer}
+        isOpen={isEditBookingOpen}
+        onClose={closeEditBooking}
         onSaved={refreshBookings}
       />
     </>

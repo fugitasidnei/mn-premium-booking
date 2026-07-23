@@ -47,6 +47,21 @@ interface BookingFormState {
   status: BookingStatus
 }
 
+function getBookingPrice(
+  service: BookingService,
+  plateType: BookingPlateType,
+): number {
+  if (service === "premium") {
+    return plateType === "yellow"
+      ? 140
+      : 180
+  }
+
+  return plateType === "yellow"
+    ? 60
+    : 80
+}
+
 const initialFormState: BookingFormState = {
   firstName: "",
   lastName: "",
@@ -306,11 +321,20 @@ function EditBookingDrawer({
             label="Service"
             value={form.service}
             onChange={(event) => {
-              updateField(
-                "service",
+              const service =
                 event.target
-                  .value as BookingService,
-              )
+                  .value as BookingService
+
+              setForm((currentForm) => ({
+                ...currentForm,
+                service,
+                price: String(
+                  getBookingPrice(
+                    service,
+                    currentForm.plateType,
+                  ),
+                ),
+              }))
             }}
           >
             <option value="exterior">
@@ -326,11 +350,20 @@ function EditBookingDrawer({
             label="Plate Type"
             value={form.plateType}
             onChange={(event) => {
-              updateField(
-                "plateType",
+              const plateType =
                 event.target
-                  .value as BookingPlateType,
-              )
+                  .value as BookingPlateType
+
+              setForm((currentForm) => ({
+                ...currentForm,
+                plateType,
+                price: String(
+                  getBookingPrice(
+                    currentForm.service,
+                    plateType,
+                  ),
+                ),
+              }))
             }}
           >
             <option value="yellow">

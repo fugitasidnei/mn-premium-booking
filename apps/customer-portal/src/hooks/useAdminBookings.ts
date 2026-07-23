@@ -12,7 +12,9 @@ import {
   getAdminBookings,
 } from "../services/adminBookings"
 
-import type { AdminBooking } from "../types/adminBooking"
+import type {
+  AdminBooking,
+} from "../types/adminBooking"
 
 interface UseAdminBookingsResult {
   bookings: AdminBooking[]
@@ -29,19 +31,27 @@ interface UseAdminBookingsResult {
 }
 
 export function useAdminBookings(): UseAdminBookingsResult {
-  const [bookings, setBookings] = useState<
-    AdminBooking[]
-  >([])
+  const [
+    bookings,
+    setBookings,
+  ] = useState<AdminBooking[]>([])
 
-  const [isLoading, setIsLoading] =
-    useState(true)
+  const [
+    isLoading,
+    setIsLoading,
+  ] = useState(true)
 
-  const [error, setError] = useState("")
+  const [
+    error,
+    setError,
+  ] = useState("")
 
   const [
     actionBookingId,
     setActionBookingId,
-  ] = useState<string | null>(null)
+  ] = useState<string | null>(
+    null,
+  )
 
   const refreshBookings =
     useCallback(async () => {
@@ -51,14 +61,18 @@ export function useAdminBookings(): UseAdminBookingsResult {
         const bookingsData =
           await getAdminBookings()
 
-        setBookings(bookingsData)
-      } catch (loadError) {
-        const message =
-          loadError instanceof Error
-            ? loadError.message
-            : "Could not load the bookings."
+        setBookings(
+          bookingsData,
+        )
+      } catch (requestError) {
+        console.error(
+          "Error loading admin bookings:",
+          requestError,
+        )
 
-        setError(message)
+        setError(
+          "Unable to load bookings.",
+        )
       } finally {
         setIsLoading(false)
       }
@@ -69,67 +83,113 @@ export function useAdminBookings(): UseAdminBookingsResult {
   }, [refreshBookings])
 
   useEffect(() => {
-    const channel = supabase
-      .channel("admin-bookings-realtime")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "bookings",
-        },
-        () => {
-          void refreshBookings()
-        },
-      )
-      .subscribe()
+    const bookingsChannel =
+      supabase
+        .channel(
+          "admin-bookings-realtime",
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "bookings",
+          },
+          () => {
+            void refreshBookings()
+          },
+        )
+        .subscribe(
+          (status) => {
+            if (
+              status ===
+              "CHANNEL_ERROR"
+            ) {
+              console.error(
+                "Unable to connect to bookings realtime.",
+              )
+            }
+          },
+        )
 
     return () => {
-      void supabase.removeChannel(channel)
+      void supabase.removeChannel(
+        bookingsChannel,
+      )
     }
   }, [refreshBookings])
 
-  async function confirmBooking(
-    bookingId: string,
-  ): Promise<void> {
-    try {
-      setActionBookingId(bookingId)
-      setError("")
+  const confirmBooking =
+    useCallback(
+      async (
+        bookingId: string,
+      ) => {
+        try {
+          setError("")
+          setActionBookingId(
+            bookingId,
+          )
 
-      await confirmAdminBooking(bookingId)
-      await refreshBookings()
-    } catch (confirmError) {
-      const message =
-        confirmError instanceof Error
-          ? confirmError.message
-          : "Could not confirm the booking."
+          await confirmAdminBooking(
+            bookingId,
+          )
 
-      setError(message)
-    } finally {
-      setActionBookingId(null)
-    }
-  }
+          await refreshBookings()
+        } catch (requestError) {
+          console.error(
+            "Error confirming booking:",
+            requestError,
+          )
 
-  async function cancelBooking(
-    bookingId: string,
-  ): Promise<void> {
-    try {
-      setActionBookingId(bookingId)
-      setError("")
+          setError(
+            "Unable to confirm booking.",
+          )
 
-      await cancelAdminBooking(bookingId)
-      await refreshBookings()
-    } catch (cancelError) {
-      const message =
-        cancelError instanceof Error
-          ? cancelError.message
-          : "Could not cancel the booking."
+          throw requestError
+        } finally {
+          setActionBookingId(
+            null,
+          )
+        }
+      },
+      [refreshBookings],
+    )
 
-      setError(message)
-    } finally {
-      setActionBookingId(null)
-    }
-  }
+  const cancelBooking =
+    useCallback(
+      async (
+        bookingId: string,
+      ) => {
+        try {
+          setError("")
+          setActionBookingId(
+            bookingId,
+          )
+
+          await cancelAdminBooking(
+            bookingId,
+          )
+
+          await refreshBookings()
+        } catch (requestError) {
+          console.error(
+            "Error cancelling booking:",
+            requestError,
+          )
+
+          setError(
+            "Unable to cancel booking.",
+          )
+
+          throw requestError
+        } finally {
+          setActionBookingId(
+            null,
+          )
+        }
+      },
+      [refreshBookings],
+    )
 
   return {
     bookings,

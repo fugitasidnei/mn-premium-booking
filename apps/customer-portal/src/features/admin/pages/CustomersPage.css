@@ -88,6 +88,7 @@
 
 .customers-manager__filters-card {
   width: 100%;
+  min-width: 0;
   padding: 20px;
 }
 
@@ -95,9 +96,10 @@
   display: grid;
   align-items: end;
   grid-template-columns:
-    minmax(260px, 1.6fr)
-    minmax(180px, 0.8fr)
-    minmax(150px, 0.6fr);
+    minmax(240px, 1.5fr)
+    minmax(165px, 0.8fr)
+    minmax(165px, 0.8fr)
+    minmax(145px, 0.6fr);
   gap: 14px;
 }
 
@@ -132,6 +134,25 @@
   text-align: center;
 }
 
+.customer-table-row {
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.customer-table-row:hover {
+  background: #f8fbff;
+  box-shadow:
+    inset 4px 0 0 rgba(11, 78, 162, 0.48);
+}
+
+.customer-table-row:focus-visible {
+  outline: 3px solid
+    rgba(11, 78, 162, 0.24);
+  outline-offset: -3px;
+}
+
 .customer-table-cell {
   display: flex;
   min-width: 150px;
@@ -150,12 +171,40 @@
   line-height: 1.4;
 }
 
-@media (max-width: 1000px) {
-  .customers-manager__summary {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-  }
+.customer-level-badge {
+  display: inline-flex;
+  min-height: 27px;
+  align-items: center;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
 
+.customer-level-badge--standard {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.customer-level-badge--returning {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.customer-level-badge--vip {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.customer-level-badge--vip::before {
+  margin-right: 4px;
+  content: "★";
+}
+
+@media (max-width: 1100px) {
   .customers-manager__filters {
     grid-template-columns:
       repeat(2, minmax(0, 1fr));
@@ -166,13 +215,21 @@
   }
 }
 
+@media (max-width: 1000px) {
+  .customers-manager__summary {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 700px) {
   .customers-manager__header {
     align-items: stretch;
     flex-direction: column;
   }
 
-  .customers-manager__header .admin-button {
+  .customers-manager__header
+    .admin-button {
     width: 100%;
   }
 
