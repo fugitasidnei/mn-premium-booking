@@ -9,6 +9,7 @@ import { supabase } from "../services/supabase"
 import {
   cancelAdminBooking,
   confirmAdminBooking,
+  deleteAdminBooking,
   getAdminBookings,
 } from "../services/adminBookings"
 
@@ -26,6 +27,9 @@ interface UseAdminBookingsResult {
     bookingId: string,
   ) => Promise<void>
   cancelBooking: (
+    bookingId: string,
+  ) => Promise<void>
+  deleteBooking: (
     bookingId: string,
   ) => Promise<void>
 }
@@ -191,6 +195,51 @@ export function useAdminBookings(): UseAdminBookingsResult {
       [refreshBookings],
     )
 
+  const deleteBooking =
+    useCallback(
+      async (
+        bookingId: string,
+      ) => {
+        try {
+          setError("")
+          setActionBookingId(
+            bookingId,
+          )
+
+          await deleteAdminBooking(
+            bookingId,
+          )
+
+          setBookings(
+            (currentBookings) =>
+              currentBookings.filter(
+                (booking) =>
+                  booking.id !==
+                  bookingId,
+              ),
+          )
+
+          await refreshBookings()
+        } catch (requestError) {
+          console.error(
+            "Error deleting booking:",
+            requestError,
+          )
+
+          setError(
+            "Unable to delete booking.",
+          )
+
+          throw requestError
+        } finally {
+          setActionBookingId(
+            null,
+          )
+        }
+      },
+      [refreshBookings],
+    )
+
   return {
     bookings,
     isLoading,
@@ -199,5 +248,6 @@ export function useAdminBookings(): UseAdminBookingsResult {
     refreshBookings,
     confirmBooking,
     cancelBooking,
+    deleteBooking,
   }
 }

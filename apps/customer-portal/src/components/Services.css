@@ -409,11 +409,31 @@
   }
 
   .popular-badge {
-    top: 18px;
-    right: 18px;
-    padding: 8px 12px;
-    font-size: 9px;
-  }
+  top: 16px;
+  right: 16px;
+  padding: 9px 18px;
+
+  background: linear-gradient(
+    135deg,
+    #facc15 0%,
+    #f59e0b 100%
+  );
+
+  color: #ffffff;
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.08em;
+
+  text-transform: uppercase;
+
+  border-radius: 999px;
+
+  box-shadow:
+    0 8px 18px rgba(245, 158, 11, 0.35);
+}
 
   .service-summary {
     min-height: auto;

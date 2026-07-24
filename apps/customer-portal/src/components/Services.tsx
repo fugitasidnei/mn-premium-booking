@@ -77,8 +77,8 @@ function Services() {
 
         <article className="service-card service-card-featured">
           <div className="popular-badge">
-            MOST COMPLETE
-          </div>
+  ⭐ BEST VALUE
+</div>
 
           <div className="service-card-header">
             <div className="service-symbol service-symbol-premium">

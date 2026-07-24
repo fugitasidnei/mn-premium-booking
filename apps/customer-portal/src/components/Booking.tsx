@@ -359,7 +359,6 @@ function Booking() {
         >
           <div className="booking-step">
             <h3>1. Select Service</h3>
-
             <div className="booking-options">
               <label
                 className={`booking-option ${
@@ -481,7 +480,8 @@ function Booking() {
                     White Plate
                   </strong>
 
-                  <span>
+                           <h3>4. Select Time</h3>
+   <span>
                     Standard vehicle
                   </span>
                 </div>
@@ -507,33 +507,48 @@ function Booking() {
             </small>
           </div>
 
-          <div className="booking-step">
-            <h3>4. Select Time</h3>
+        <div className="booking-step">
+  <h3>4. Select Time</h3>
 
-            {!date && (
-              <p className="booking-information">
-                Select a date to see
-                available times.
-              </p>
-            )}
+ {date && (
+  <div className="booking-arrival-banner">
+    <span className="booking-arrival-icon">
+      ℹ️
+    </span>
 
-            {loadingTimes && (
-              <p className="booking-information">
-                Loading available times...
-              </p>
-            )}
+    <span>
+      Please arrive{" "}
+      <strong>10 minutes before</strong>{" "}
+      your scheduled appointment for
+      vehicle check-in.
+    </span>
+  </div>
+)}
 
-            {date &&
-              !loadingTimes &&
-              availableTimes.length === 0 && (
-                <p className="booking-information">
-                  No appointments are
-                  available on this date.
-                </p>
-              )}
+  {!date && (
+    <p className="booking-information">
+      Select a date to see
+      available times.
+    </p>
+  )}
 
-            {!loadingTimes && (
-              <div className="booking-times">
+  {loadingTimes && (
+    <p className="booking-information">
+      Loading available times...
+    </p>
+  )}
+
+  {date &&
+    !loadingTimes &&
+    availableTimes.length === 0 && (
+      <p className="booking-information">
+        No appointments are
+        available on this date.
+      </p>
+    )}
+
+  {!loadingTimes && (
+    <div className="booking-times">
                 {availableTimes.map(
                   (availableTime) => (
                     <button
@@ -720,10 +735,7 @@ function Booking() {
               : "BOOK APPOINTMENT"}
           </button>
 
-          <p className="booking-arrival-note">
-            Please arrive 10 minutes before
-            your appointment.
-          </p>
+          
         </form>
       </div>
     </section>

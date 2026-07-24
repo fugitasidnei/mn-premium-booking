@@ -320,14 +320,15 @@ function compareBookings(
 
 function BookingPage() {
   const {
-    bookings,
-    isLoading,
-    error,
-    actionBookingId,
-    refreshBookings,
-    confirmBooking,
-    cancelBooking,
-  } = useAdminBookings()
+  bookings,
+  isLoading,
+  error,
+  actionBookingId,
+  refreshBookings,
+  confirmBooking,
+  cancelBooking,
+  deleteBooking,
+} = useAdminBookings()
 
   const [search, setSearch] =
     useState("")
@@ -1442,6 +1443,7 @@ function BookingPage() {
         onCancel={
           handleDrawerCancel
         }
+        onDelete={deleteBooking}
       />
 
       <EditBookingDrawer

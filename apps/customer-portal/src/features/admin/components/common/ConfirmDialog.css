@@ -1,0 +1,161 @@
+.confirm-dialog-overlay {
+  position: fixed;
+  z-index: 2000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.62);
+  backdrop-filter: blur(3px);
+}
+
+.confirm-dialog {
+  width: min(460px, 100%);
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow:
+    0 24px 70px
+    rgba(15, 23, 42, 0.3);
+  animation:
+    confirm-dialog-enter
+    0.18s ease-out;
+}
+
+.confirm-dialog__icon {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  margin:
+    28px auto
+    0;
+  border-radius: 50%;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.confirm-dialog__icon--danger {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.confirm-dialog__icon--warning {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.confirm-dialog__content {
+  padding: 20px 28px 24px;
+  text-align: center;
+}
+
+.confirm-dialog__content h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 24px;
+  line-height: 1.25;
+}
+
+.confirm-dialog__description {
+  margin: 10px 0 0;
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.confirm-dialog__details {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+  padding: 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: #f8fafc;
+  text-align: left;
+}
+
+.confirm-dialog__details div {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.confirm-dialog__details span {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.confirm-dialog__details strong {
+  color: #0f172a;
+  font-size: 14px;
+  text-align: right;
+}
+
+.confirm-dialog__warning {
+  margin: 18px 0 0;
+  color: #b91c1c;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.confirm-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 18px 28px;
+  border-top: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+@keyframes confirm-dialog-enter {
+  from {
+    opacity: 0;
+    transform:
+      translateY(12px)
+      scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+@media (max-width: 520px) {
+  .confirm-dialog-overlay {
+    padding: 16px;
+  }
+
+  .confirm-dialog__content {
+    padding:
+      18px 20px
+      22px;
+  }
+
+  .confirm-dialog__actions {
+    flex-direction: column-reverse;
+    padding:
+      16px 20px
+      20px;
+  }
+
+  .confirm-dialog__actions button {
+    width: 100%;
+  }
+
+  .confirm-dialog__details div {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .confirm-dialog__details strong {
+    text-align: left;
+  }
+}
