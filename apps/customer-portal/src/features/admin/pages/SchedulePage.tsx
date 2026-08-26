@@ -218,6 +218,18 @@ function minutesToTime(
   )}`
 }
 
+function intervalsOverlap(
+  firstStart: number,
+  firstEnd: number,
+  secondStart: number,
+  secondEnd: number,
+): boolean {
+  return (
+    firstStart < secondEnd &&
+    firstEnd > secondStart
+  )
+}
+
 function getBookingEndTime(
   booking: AdminBooking,
 ): string {
@@ -629,8 +641,6 @@ function SchedulePage() {
       weekDays,
     ])
 
-  
-
   const weekConfirmedBookings =
     weekBookings.filter(
       (booking) =>
@@ -969,6 +979,108 @@ function SchedulePage() {
   async function handleScheduleBlockSaved(
     block: NewScheduleBlock,
   ) {
+    const blockStart =
+      timeToMinutes(
+        block.start_time,
+      )
+
+    const blockEnd =
+      timeToMinutes(
+        block.end_time,
+      )
+
+    const conflictingBooking =
+      bookings.find(
+        (booking) => {
+          if (
+            booking.status ===
+            "cancelled"
+          ) {
+            return false
+          }
+
+          if (
+            booking.booking_date !==
+            block.block_date
+          ) {
+            return false
+          }
+
+          const bookingStart =
+            timeToMinutes(
+              booking.booking_time,
+            )
+
+          const bookingEnd =
+            bookingStart +
+            getServiceDuration(
+              booking.service,
+            )
+
+          return intervalsOverlap(
+            blockStart,
+            blockEnd,
+            bookingStart,
+            bookingEnd,
+          )
+        },
+      )
+
+    if (conflictingBooking) {
+      window.alert(
+        `This time cannot be blocked because it overlaps an active booking for ${getCustomerName(
+          conflictingBooking,
+        )} (${formatBookingTime(
+          conflictingBooking.booking_time,
+        )}–${getBookingEndTime(
+          conflictingBooking,
+        )}).`,
+      )
+
+      return
+    }
+
+    const conflictingBlock =
+      scheduleBlocks.find(
+        (existingBlock) => {
+          if (
+            existingBlock.block_date !==
+            block.block_date
+          ) {
+            return false
+          }
+
+          const existingStart =
+            timeToMinutes(
+              existingBlock.start_time,
+            )
+
+          const existingEnd =
+            timeToMinutes(
+              existingBlock.end_time,
+            )
+
+          return intervalsOverlap(
+            blockStart,
+            blockEnd,
+            existingStart,
+            existingEnd,
+          )
+        },
+      )
+
+    if (conflictingBlock) {
+      window.alert(
+        `This time cannot be blocked because it overlaps the existing block "${conflictingBlock.title}" (${formatBookingTime(
+          conflictingBlock.start_time,
+        )}–${formatBookingTime(
+          conflictingBlock.end_time,
+        )}).`,
+      )
+
+      return
+    }
+
     await addScheduleBlock(
       block,
     )

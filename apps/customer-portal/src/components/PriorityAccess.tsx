@@ -1,4 +1,12 @@
+import {
+  useState,
+} from "react"
+
 import "./PriorityAccess.css"
+
+import {
+  joinWaitingList,
+} from "../services/waitingList"
 
 const PRIORITY_BENEFITS = [
   "Free to join",
@@ -8,10 +16,121 @@ const PRIORITY_BENEFITS = [
 ]
 
 function PriorityAccess() {
-  const handleSubmit = (
+  const [
+    isSubmitting,
+    setIsSubmitting,
+  ] = useState(false)
+
+  const [
+    successMessage,
+    setSuccessMessage,
+  ] = useState("")
+
+  const [
+    errorMessage,
+    setErrorMessage,
+  ] = useState("")
+
+  async function handleSubmit(
     event: React.FormEvent<HTMLFormElement>,
-  ) => {
+  ) {
     event.preventDefault()
+
+    const form =
+      event.currentTarget
+
+    const formData =
+      new FormData(form)
+
+    const fullName =
+      String(
+        formData.get(
+          "waitlistName",
+        ) ?? "",
+      ).trim()
+
+    const phone =
+      String(
+        formData.get(
+          "waitlistPhone",
+        ) ?? "",
+      ).trim()
+
+    const email =
+      String(
+        formData.get(
+          "waitlistEmail",
+        ) ?? "",
+      ).trim()
+
+    const vehicle =
+      String(
+        formData.get(
+          "waitlistVehicle",
+        ) ?? "",
+      ).trim()
+
+    const service =
+      String(
+        formData.get(
+          "waitlistService",
+        ) ?? "",
+      )
+
+    const preferredDate =
+      String(
+        formData.get(
+          "waitlistDate",
+        ) ?? "",
+      )
+
+    const preferredTime =
+      String(
+        formData.get(
+          "waitlistTime",
+        ) ?? "",
+      )
+
+    const plateType =
+      String(
+        formData.get(
+          "waitlistPlate",
+        ) ?? "",
+      )
+
+    try {
+      setIsSubmitting(true)
+      setSuccessMessage("")
+      setErrorMessage("")
+
+      await joinWaitingList({
+        fullName,
+        phone,
+        email,
+        vehicle,
+        service,
+        preferredDate,
+        preferredTime,
+        plateType,
+      })
+
+      setSuccessMessage(
+        "You have successfully joined the Priority Access List. We will contact you when a suitable appointment becomes available.",
+      )
+
+      form.reset()
+    } catch (error) {
+      console.error(
+        "Error joining waiting list:",
+        error,
+      )
+
+      setErrorMessage(
+        "We could not add you to the Priority Access List. Please try again.",
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -21,7 +140,9 @@ function PriorityAccess() {
     >
       <div className="priority-container">
         <div className="priority-heading">
-          <span>PRIORITY ACCESS</span>
+          <span>
+            PRIORITY ACCESS
+          </span>
 
           <h2>
             Be First in Line When a Spot Opens
@@ -64,7 +185,9 @@ function PriorityAccess() {
                       ✓
                     </span>
 
-                    <span>{benefit}</span>
+                    <span>
+                      {benefit}
+                    </span>
                   </li>
                 ),
               )}
@@ -89,9 +212,13 @@ function PriorityAccess() {
             onSubmit={handleSubmit}
           >
             <div className="priority-form-heading">
-              <span>JOIN THE LIST</span>
+              <span>
+                JOIN THE LIST
+              </span>
 
-              <h3>Priority Access Request</h3>
+              <h3>
+                Priority Access Request
+              </h3>
 
               <p>
                 Complete your information and
@@ -99,9 +226,23 @@ function PriorityAccess() {
               </p>
             </div>
 
+            {successMessage && (
+              <div className="priority-success">
+                {successMessage}
+              </div>
+            )}
+
+            {errorMessage && (
+              <div className="priority-error">
+                {errorMessage}
+              </div>
+            )}
+
             <div className="priority-grid">
               <label>
-                <span>Full Name</span>
+                <span>
+                  Full Name
+                </span>
 
                 <input
                   type="text"
@@ -113,7 +254,9 @@ function PriorityAccess() {
               </label>
 
               <label>
-                <span>Phone Number</span>
+                <span>
+                  Phone Number
+                </span>
 
                 <input
                   type="tel"
@@ -125,7 +268,9 @@ function PriorityAccess() {
               </label>
 
               <label>
-                <span>Email</span>
+                <span>
+                  Email
+                </span>
 
                 <input
                   type="email"
@@ -137,7 +282,9 @@ function PriorityAccess() {
               </label>
 
               <label>
-                <span>Vehicle</span>
+                <span>
+                  Vehicle
+                </span>
 
                 <input
                   type="text"
@@ -148,14 +295,19 @@ function PriorityAccess() {
               </label>
 
               <label>
-                <span>Service</span>
+                <span>
+                  Service
+                </span>
 
                 <select
                   name="waitlistService"
                   required
                   defaultValue=""
                 >
-                  <option value="" disabled>
+                  <option
+                    value=""
+                    disabled
+                  >
                     Select a service
                   </option>
 
@@ -170,7 +322,9 @@ function PriorityAccess() {
               </label>
 
               <label>
-                <span>Preferred Date</span>
+                <span>
+                  Preferred Date
+                </span>
 
                 <input
                   type="date"
@@ -180,14 +334,19 @@ function PriorityAccess() {
               </label>
 
               <label>
-                <span>Preferred Time</span>
+                <span>
+                  Preferred Time
+                </span>
 
                 <select
                   name="waitlistTime"
                   required
                   defaultValue=""
                 >
-                  <option value="" disabled>
+                  <option
+                    value=""
+                    disabled
+                  >
                     Select a preference
                   </option>
 
@@ -206,14 +365,19 @@ function PriorityAccess() {
               </label>
 
               <label>
-                <span>Plate Type</span>
+                <span>
+                  Plate Type
+                </span>
 
                 <select
                   name="waitlistPlate"
                   required
                   defaultValue=""
                 >
-                  <option value="" disabled>
+                  <option
+                    value=""
+                    disabled
+                  >
                     Select plate type
                   </option>
 
@@ -231,8 +395,13 @@ function PriorityAccess() {
             <button
               type="submit"
               className="priority-button"
+              disabled={
+                isSubmitting
+              }
             >
-              JOIN PRIORITY ACCESS
+              {isSubmitting
+                ? "JOINING..."
+                : "JOIN PRIORITY ACCESS"}
             </button>
 
             <p className="priority-form-note">

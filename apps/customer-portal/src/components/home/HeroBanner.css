@@ -1,0 +1,150 @@
+/* =========================================================
+   MN PREMIUM SERVICE — HERO BANNER
+   Imagem original: 1536 × 1024
+   ========================================================= */
+
+.hero-banner {
+  position: relative;
+  width: 100%;
+  max-width: 1536px;
+  margin: 0 auto;
+  overflow: hidden;
+  background: #071d3d;
+  aspect-ratio: 3 / 2;
+}
+
+.hero-banner-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Áreas clicáveis posicionadas sobre
+   os botões existentes na própria imagem */
+
+.hero-btn {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  overflow: hidden;
+  border-radius: 12px;
+  background: transparent;
+  color: transparent;
+  font-size: 0;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.hero-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 24px rgba(255, 255, 255, 0.38);
+  transform: translateY(-2px);
+}
+
+.hero-btn:focus-visible {
+  outline: 4px solid #ffcc00;
+  outline-offset: 3px;
+}
+
+/* Botão verde da House Cleaning */
+
+.hero-btn-left {
+  left: 8.55%;
+  top: 69.9%;
+  width: 17.55%;
+  height: 6.55%;
+}
+
+/* Botão azul do Auto Care */
+
+.hero-btn-right {
+  right: 9.65%;
+  top: 69.9%;
+  width: 17%;
+  height: 6.55%;
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .hero-banner {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .hero-banner-image {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .hero-btn {
+    border-radius: 8px;
+  }
+}
+
+/* =========================================================
+   CELULAR
+   Garante que a arte inteira caiba na largura da tela.
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .hero-banner {
+    width: 100vw;
+    max-width: 100vw;
+
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+
+    aspect-ratio: 3 / 2;
+
+    overflow: hidden;
+  }
+
+  .hero-banner-image {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    max-width: none;
+
+    object-fit: contain;
+    object-position: center center;
+
+    transform: none;
+  }
+
+  .hero-btn {
+    border-radius: 5px;
+  }
+
+  .hero-btn:hover {
+    transform: none;
+  }
+}
+
+/* =========================================================
+   CELULARES PEQUENOS
+   ========================================================= */
+
+@media (max-width: 390px) {
+  .hero-banner {
+    width: 100vw;
+    max-width: 100vw;
+  }
+
+  .hero-banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}

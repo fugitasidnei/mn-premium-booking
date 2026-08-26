@@ -22,10 +22,6 @@ function Services() {
       <div className="service-grid">
         <article className="service-card">
           <div className="service-card-header">
-            <div className="service-symbol">
-              <span aria-hidden="true">01</span>
-            </div>
-
             <div>
               <span className="service-card-label">
                 REGULAR CARE
@@ -76,15 +72,7 @@ function Services() {
         </article>
 
         <article className="service-card service-card-featured">
-          <div className="popular-badge">
-  ⭐ BEST VALUE
-</div>
-
           <div className="service-card-header">
-            <div className="service-symbol service-symbol-premium">
-              <span aria-hidden="true">02</span>
-            </div>
-
             <div>
               <span className="service-card-label">
                 PREMIUM CARE

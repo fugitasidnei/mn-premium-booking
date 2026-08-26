@@ -1,0 +1,158 @@
+.location-section {
+  padding: 80px 24px;
+  background:
+    linear-gradient(
+      135deg,
+      #f7fbff 0%,
+      #ffffff 55%,
+      #f5faf7 100%
+    );
+}
+
+.location-container {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns:
+    minmax(0, 0.85fr)
+    minmax(0, 1.15fr);
+  overflow: hidden;
+  border: 1px solid rgba(11, 43, 91, 0.12);
+  border-radius: 28px;
+  background: #ffffff;
+  box-shadow:
+    0 24px 60px rgba(11, 43, 91, 0.12);
+}
+
+.location-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 56px;
+}
+
+.location-eyebrow {
+  margin-bottom: 14px;
+  color: #07833d;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.location-content h2 {
+  margin: 0;
+  color: #0b2b5b;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.08;
+}
+
+.location-address {
+  margin: 24px 0 0;
+  color: #18263a;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.7;
+}
+
+.location-notice {
+  margin: 16px 0 0;
+  color: #5f6b7a;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.location-directions-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  margin-top: 30px;
+  padding: 0 30px;
+  border: 2px solid #d6ad28;
+  border-radius: 999px;
+  background: #07833d;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow:
+    0 12px 28px rgba(7, 131, 61, 0.22);
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.location-directions-button:hover {
+  transform: translateY(-2px);
+  background: #056c33;
+  box-shadow:
+    0 16px 32px rgba(7, 131, 61, 0.28);
+}
+
+.location-directions-button:focus-visible {
+  outline: 3px solid rgba(214, 173, 40, 0.5);
+  outline-offset: 4px;
+}
+
+.location-map {
+  min-height: 480px;
+  background: #e9eef5;
+}
+
+.location-map iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 480px;
+  border: 0;
+}
+
+@media (max-width: 820px) {
+  .location-section {
+    padding: 56px 18px;
+  }
+
+  .location-container {
+    grid-template-columns: 1fr;
+    border-radius: 22px;
+  }
+
+  .location-content {
+    padding: 38px 28px;
+  }
+
+  .location-map,
+  .location-map iframe {
+    min-height: 360px;
+  }
+}
+
+@media (max-width: 480px) {
+  .location-section {
+    padding: 44px 14px;
+  }
+
+  .location-content {
+    padding: 32px 22px;
+  }
+
+  .location-content h2 {
+    font-size: 2rem;
+  }
+
+  .location-address {
+    font-size: 1rem;
+  }
+
+  .location-directions-button {
+    width: 100%;
+  }
+
+  .location-map,
+  .location-map iframe {
+    min-height: 320px;
+  }
+}
