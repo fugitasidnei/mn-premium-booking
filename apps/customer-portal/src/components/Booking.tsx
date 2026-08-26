@@ -1,6 +1,7 @@
 import {
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react"
 
@@ -10,6 +11,8 @@ import {
   createBooking,
   getBookedTimes,
 } from "../services/bookings"
+
+import { supabase } from "../services/supabase"
 
 type ServiceType = "exterior" | "premium"
 type PlateType = "yellow" | "white"
@@ -43,6 +46,8 @@ const AVAILABLE_TIMES = [
 ]
 
 function Booking() {
+  const submissionLock = useRef(false)
+
   const [service, setService] =
     useState<ServiceType>("exterior")
 
@@ -52,14 +57,20 @@ function Booking() {
   const [date, setDate] = useState("")
   const [time, setTime] = useState("")
 
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
+  const [firstName, setFirstName] =
+    useState("")
+
+  const [lastName, setLastName] =
+    useState("")
+
   const [phone, setPhone] = useState("")
   const [email, setEmail] = useState("")
   const [vehicle, setVehicle] = useState("")
   const [model, setModel] = useState("")
+
   const [licensePlate, setLicensePlate] =
     useState("")
+
   const [notes, setNotes] = useState("")
 
   const [bookedTimes, setBookedTimes] =
@@ -156,7 +167,6 @@ function Booking() {
 
     setDate(selectedDate)
     setTime("")
-    
   }
 
   function clearForm() {
@@ -174,63 +184,45 @@ function Booking() {
     setNotes("")
   }
 
-  async function sendBookingEmail() {
-    const formData = new FormData()
-
-    formData.append(
-      "access_key",
-      "6f947432-d9e3-4b47-ba87-b1321427531a",
-    )
-
-    formData.append(
-      "subject",
-      "New Booking - MN Premium Service",
-    )
-
-    formData.append(
-      "Service",
-      selectedService.name,
-    )
-
-    formData.append(
-      "Plate Type",
-      plateType === "yellow"
-        ? "Yellow Plate"
-        : "White Plate",
-    )
-
-    formData.append("Price", `US$${price}`)
-    formData.append("Date", date)
-    formData.append("Time", time)
-
-    formData.append(
-      "Customer",
-      `${firstName} ${lastName}`,
-    )
-
-    formData.append("Phone", phone)
-    formData.append("Email", email)
-    formData.append("Vehicle", vehicle)
-    formData.append("Model", model)
-    formData.append(
-      "License Plate",
-      licensePlate,
-    )
-    formData.append("Notes", notes)
-
-    const response = await fetch(
-      "https://api.web3forms.com/submit",
+  async function sendConfirmationEmail(
+    bookingId: string,
+  ): Promise<boolean> {
+    const {
+      data,
+      error,
+    } = await supabase.functions.invoke(
+      "send-booking-confirmation",
       {
-        method: "POST",
-        body: formData,
+        body: {
+          bookingId,
+        },
       },
     )
 
-    const result = (await response.json()) as {
-      success?: boolean
+    if (error) {
+      console.error(
+        "Error invoking confirmation email function:",
+        error,
+      )
+
+      return false
     }
 
-    return result.success === true
+    const result = data as {
+      success?: boolean
+      error?: string
+    } | null
+
+    if (result?.success !== true) {
+      console.error(
+        "Confirmation email function returned an error:",
+        result,
+      )
+
+      return false
+    }
+
+    return true
   }
 
   async function handleSubmit(
@@ -238,10 +230,15 @@ function Booking() {
   ) {
     event.preventDefault()
 
+    if (submissionLock.current) {
+      return
+    }
+
     if (!date || !time) {
       window.alert(
         "Please select a date and time.",
       )
+
       return
     }
 
@@ -254,10 +251,16 @@ function Booking() {
       return
     }
 
+    const selectedTime = time
+    const customerFirstName = firstName
+
+    submissionLock.current = true
+
     try {
       setSavingBooking(true)
+      setSuccessMessage("")
 
-      await createBooking({
+      const bookingId = await createBooking({
         service,
         plateType,
         bookingDate: date,
@@ -273,33 +276,38 @@ function Booking() {
         price,
       })
 
-      const emailWasSent =
-        await sendBookingEmail()
-
-      if (!emailWasSent) {
-        window.alert(
-          "Your booking was saved, but the email notification could not be sent. We will still receive your reservation in our system.",
-        )
-      }
+      const confirmationEmailWasSent =
+        await sendConfirmationEmail(bookingId)
 
       setBookedTimes((currentTimes) => [
         ...currentTimes,
-        time,
+        selectedTime,
       ])
 
-      setSuccessMessage(
-        `Thank you, ${firstName}! Your booking request was received.`,
-      )
+      if (confirmationEmailWasSent) {
+        setSuccessMessage(
+          `Thank you, ${customerFirstName}! Your booking request was received. Please check your email to confirm your appointment.`,
+        )
+      } else {
+        setSuccessMessage(
+          `Thank you, ${customerFirstName}! Your booking request was received.`,
+        )
+
+        window.alert(
+          "Your booking was saved, but the confirmation email could not be sent. We will contact you shortly.",
+        )
+      }
 
       clearForm()
+
       window.setTimeout(() => {
-  document
-    .getElementById("booking")
-    ?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    })
-}, 100)
+        document
+          .getElementById("booking")
+          ?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          })
+      }, 100)
     } catch (error) {
       const message =
         error instanceof Error
@@ -319,6 +327,7 @@ function Booking() {
 
       setTime("")
     } finally {
+      submissionLock.current = false
       setSavingBooking(false)
     }
   }
@@ -347,8 +356,8 @@ function Booking() {
             </strong>
 
             <p>
-              We will contact you to confirm
-              your appointment.
+              Your appointment will remain
+              pending until it is confirmed.
             </p>
           </div>
         )}
@@ -359,6 +368,7 @@ function Booking() {
         >
           <div className="booking-step">
             <h3>1. Select Service</h3>
+
             <div className="booking-options">
               <label
                 className={`booking-option ${
@@ -371,21 +381,19 @@ function Booking() {
                   type="radio"
                   name="service"
                   value="exterior"
-                  checked={
-                    service === "exterior"
-                  }
+                  checked={service === "exterior"}
                   onChange={() =>
                     setService("exterior")
                   }
                 />
 
                 <div>
-                  <strong>
-                    Exterior Wash
-                  </strong>
+                  <strong>Exterior Wash</strong>
 
                   <span>
-                    Approximately 90 minutes
+                    Approximately{" "}
+                    {SERVICES.exterior.duration}{" "}
+                    minutes
                   </span>
                 </div>
               </label>
@@ -401,21 +409,19 @@ function Booking() {
                   type="radio"
                   name="service"
                   value="premium"
-                  checked={
-                    service === "premium"
-                  }
+                  checked={service === "premium"}
                   onChange={() =>
                     setService("premium")
                   }
                 />
 
                 <div>
-                  <strong>
-                    Premium Finish
-                  </strong>
+                  <strong>Premium Finish</strong>
 
                   <span>
-                    Approximately 150 minutes
+                    Approximately{" "}
+                    {SERVICES.premium.duration}{" "}
+                    minutes
                   </span>
                 </div>
               </label>
@@ -437,22 +443,15 @@ function Booking() {
                   type="radio"
                   name="plateType"
                   value="yellow"
-                  checked={
-                    plateType === "yellow"
-                  }
+                  checked={plateType === "yellow"}
                   onChange={() =>
                     setPlateType("yellow")
                   }
                 />
 
                 <div>
-                  <strong>
-                    Yellow Plate
-                  </strong>
-
-                  <span>
-                    Compact vehicle
-                  </span>
+                  <strong>Yellow Plate</strong>
+                  <span>Compact vehicle</span>
                 </div>
               </label>
 
@@ -467,23 +466,15 @@ function Booking() {
                   type="radio"
                   name="plateType"
                   value="white"
-                  checked={
-                    plateType === "white"
-                  }
+                  checked={plateType === "white"}
                   onChange={() =>
                     setPlateType("white")
                   }
                 />
 
                 <div>
-                  <strong>
-                    White Plate
-                  </strong>
-
-                           <h3>4. Select Time</h3>
-   <span>
-                    Standard vehicle
-                  </span>
+                  <strong>White Plate</strong>
+                  <span>Standard vehicle</span>
                 </div>
               </label>
             </div>
@@ -507,48 +498,47 @@ function Booking() {
             </small>
           </div>
 
-        <div className="booking-step">
-  <h3>4. Select Time</h3>
+          <div className="booking-step">
+            <h3>4. Select Time</h3>
 
- {date && (
-  <div className="booking-arrival-banner">
-    <span className="booking-arrival-icon">
-      ℹ️
-    </span>
+            {date && (
+              <div className="booking-arrival-banner">
+                <span className="booking-arrival-icon">
+                  ℹ️
+                </span>
 
-    <span>
-      Please arrive{" "}
-      <strong>10 minutes before</strong>{" "}
-      your scheduled appointment for
-      vehicle check-in.
-    </span>
-  </div>
-)}
+                <span>
+                  Please arrive{" "}
+                  <strong>10 minutes before</strong>{" "}
+                  your scheduled appointment
+                  for vehicle check-in.
+                </span>
+              </div>
+            )}
 
-  {!date && (
-    <p className="booking-information">
-      Select a date to see
-      available times.
-    </p>
-  )}
+            {!date && (
+              <p className="booking-information">
+                Select a date to see available times.
+              </p>
+            )}
 
-  {loadingTimes && (
-    <p className="booking-information">
-      Loading available times...
-    </p>
-  )}
+            {loadingTimes && (
+              <p className="booking-information">
+                Loading available times...
+              </p>
+            )}
 
-  {date &&
-    !loadingTimes &&
-    availableTimes.length === 0 && (
-      <p className="booking-information">
-        No appointments are
-        available on this date.
-      </p>
-    )}
+            {date &&
+              !loadingTimes &&
+              availableTimes.length === 0 && (
+                <p className="booking-information">
+                  No appointments are
+                  available on this date.
+                </p>
+              )}
 
-  {!loadingTimes && (
-    <div className="booking-times">
+            {!loadingTimes && (
+              <div className="booking-times">
                 {availableTimes.map(
                   (availableTime) => (
                     <button
@@ -572,9 +562,7 @@ function Booking() {
           </div>
 
           <div className="booking-step">
-            <h3>
-              5. Customer Information
-            </h3>
+            <h3>5. Customer Information</h3>
 
             <div className="booking-fields">
               <input
@@ -583,9 +571,7 @@ function Booking() {
                 placeholder="First Name *"
                 value={firstName}
                 onChange={(event) =>
-                  setFirstName(
-                    event.target.value,
-                  )
+                  setFirstName(event.target.value)
                 }
                 required
               />
@@ -596,9 +582,7 @@ function Booking() {
                 placeholder="Last Name *"
                 value={lastName}
                 onChange={(event) =>
-                  setLastName(
-                    event.target.value,
-                  )
+                  setLastName(event.target.value)
                 }
                 required
               />
@@ -609,9 +593,7 @@ function Booking() {
                 placeholder="Phone *"
                 value={phone}
                 onChange={(event) =>
-                  setPhone(
-                    event.target.value,
-                  )
+                  setPhone(event.target.value)
                 }
                 required
               />
@@ -622,9 +604,7 @@ function Booking() {
                 placeholder="Email *"
                 value={email}
                 onChange={(event) =>
-                  setEmail(
-                    event.target.value,
-                  )
+                  setEmail(event.target.value)
                 }
                 required
               />
@@ -635,9 +615,7 @@ function Booking() {
                 placeholder="Vehicle"
                 value={vehicle}
                 onChange={(event) =>
-                  setVehicle(
-                    event.target.value,
-                  )
+                  setVehicle(event.target.value)
                 }
               />
 
@@ -647,9 +625,7 @@ function Booking() {
                 placeholder="Model"
                 value={model}
                 onChange={(event) =>
-                  setModel(
-                    event.target.value,
-                  )
+                  setModel(event.target.value)
                 }
               />
 
@@ -659,9 +635,7 @@ function Booking() {
                 placeholder="License Plate (optional)"
                 value={licensePlate}
                 onChange={(event) =>
-                  setLicensePlate(
-                    event.target.value,
-                  )
+                  setLicensePlate(event.target.value)
                 }
               />
             </div>
@@ -681,10 +655,7 @@ function Booking() {
 
             <div>
               <span>Service</span>
-
-              <strong>
-                {selectedService.name}
-              </strong>
+              <strong>{selectedService.name}</strong>
             </div>
 
             <div>
@@ -699,26 +670,17 @@ function Booking() {
 
             <div>
               <span>Date</span>
-
-              <strong>
-                {date || "Not selected"}
-              </strong>
+              <strong>{date || "Not selected"}</strong>
             </div>
 
             <div>
               <span>Time</span>
-
-              <strong>
-                {time || "Not selected"}
-              </strong>
+              <strong>{time || "Not selected"}</strong>
             </div>
 
             <div className="booking-price">
               <span>Price</span>
-
-              <strong>
-                US${price}
-              </strong>
+              <strong>US${price}</strong>
             </div>
           </div>
 
@@ -731,11 +693,21 @@ function Booking() {
             }
           >
             {savingBooking
-              ? "SENDING..."
+              ? "BOOKING YOUR APPOINTMENT... PLEASE WAIT"
               : "BOOK APPOINTMENT"}
           </button>
 
-          
+          {savingBooking && (
+            <p
+              className="booking-information"
+              role="status"
+              aria-live="polite"
+            >
+              Please wait and do not close or
+              refresh this page while your booking
+              is being processed.
+            </p>
+          )}
         </form>
       </div>
     </section>
