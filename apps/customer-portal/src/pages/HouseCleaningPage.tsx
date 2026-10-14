@@ -195,11 +195,11 @@ function HouseCleaningPage() {
                   </div>
 
                   <div className="cleaning-board-price-list">
-                    <div><span>Weekly Cleaning</span><strong>$100</strong></div>
-                    <div><span>Bi-Weekly Cleaning</span><strong>$120</strong></div>
-                    <div><span>Monthly Cleaning</span><strong>$140</strong></div>
-                    <div><span>First Deep Cleaning</span><strong>$160</strong></div>
-                    <div><span>PCS Cleaning</span><strong>$250</strong></div>
+                    <div><span>Weekly Cleaning</span><strong>$120+</strong></div>
+                    <div><span>Bi-Weekly Cleaning</span><strong>$140+</strong></div>
+                    <div><span>Monthly Cleaning</span><strong>$160+</strong></div>
+                    <div><span>First Deep Cleaning</span><strong>$180+</strong></div>
+                    <div><span>PCS Cleaning</span><strong>$250+</strong></div>
                     <div>
                       <span>
                         Wash &amp; Fold Laundry
